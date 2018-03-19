@@ -2,6 +2,7 @@ var currLat = 0;
 var currLong = 0;
 var placeSearch;
 var autocomplete;
+var nextPageToken = [];
 
 function initAutocomplete() {
   autocomplete = new google.maps.places.Autocomplete(
@@ -120,18 +121,119 @@ function validateKey() {
 	}			
 }
 
-
-function formTable() {
-	console.log('form table');
+function getUrl() {
+	var url = "";
+	if (document.getElementById('currLocation').checked == true) {
+		url = "/result?keyw=" + document.getElementById('keyword').value + "&category=" + document.getElementById('cat').value + "&distance=" + document.getElementById('dist').value + "&locOpt=" + document.getElementById('currLocation').value
+	}
+	else {
+		url = "/result?keyw=" + document.getElementById('keyword').value + "&category=" + document.getElementById('cat').value + "&distance=" + document.getElementById('dist').value + "&locOpt=other-loc&loc=" + document.getElementById('loc').value;
+	}
+	url = url.replaceAll(' ','+');
+	return url;
 }
 
+function submitForm() {
+	var url = getUrl();
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET",url,false);
+	xmlhttp.send();
+	var ipr = xmlhttp.responseText;
+	var responseObj = JSON.parse(ipr);
+	formTable(responseObj,0);
+}
 
-$(function(){
-  $('form[name=inputForm]').submit(function(){
-    $.post($(this).attr('action'), $(this).serialize(), function(json) {
-    	console.log("check");
-      console.log(json);
-    }, 'json');
-    return false;
-  });
-});
+function formTable(obj,ind) {
+	console.log("index = ", ind);
+	console.log("obj = ", obj);
+	if (obj.status === "OK" && obj.results.length > 0) {
+		var tab = "<div class='wrapper-div'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
+
+		for (var i = 0; i < obj.results.length; i++) {
+			var cnt = i+1+ind*20;
+			tab += "<tr><td scope='row'>"+ cnt +"</td>";
+			tab += "<td>" + "<img src='" + obj.results[i].icon + "' style='height:25px;width:25px'>" + "</td>";
+			tab += "<td>" + obj.results[i].name + "</td>";
+			tab += "<td>" + obj.results[i].vicinity + "</td>";
+			tab += "<td>" + "<button class='btn'><i class='fa fa-star' style='font-size:20px'></i></button>" + "</td>";
+			tab += "<td>" + "<button class='btn'><i class='fa fa-arrow-right' style='font-size:20px'></i></button>" + "</td>";
+			tab += "</tr>";
+		}
+
+		if (obj.next_page_token !== undefined && ind === 0) {
+			nextPageToken[ind] = obj.next_page_token;
+			var temp = obj.next_page_token + "," + ind;
+			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div>"
+		}
+		else if (obj.next_page_token !== undefined && ind !== 0) {
+			nextPageToken[ind] = obj.next_page_token;
+			var temp = obj.next_page_token + "," + ind;
+			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "<button class='btn' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div>"
+
+		}
+		else if (ind !== 0 && obj.next_page_token === undefined) {
+			var temp = obj.next_page_token + "," + ind;
+			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "</div></div>"
+		}
+		else {
+			tab += "</tbody></table></div>";
+		}
+
+		document.getElementById('res-area').innerHTML = tab;
+	}
+
+	else if (obj.results.length === 0 || obj.status === 'ZERO_RESULTS') {
+		document.getElementById('res-area').innerHTML = "<div class='alert alert-warning wrapper-div'>No results found.</div>";
+	}
+
+	else if (obj.status !== "OK") {
+		document.getElementById('res-area').innerHTML = "<div class='alert alert-danger wrapper-div'>Failed to get search results.</div>";
+	}
+
+}
+
+function getNextPage(str) {
+	console.log("next page");
+	var token = str.split(',')[0];
+	var ind = parseInt(str.split(',')[1]);
+	var url = "/result?next_page_token=" + token;
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET",url,false);
+	xmlhttp.send();
+	var ipr = xmlhttp.responseText;
+	var responseObj = JSON.parse(ipr);
+	ind = ind + 1;
+	formTable(responseObj,ind);
+}
+
+function getPrevPage(str) {
+	var token = str.split(',')[0];
+	var ind = parseInt(str.split(',')[1]);
+	if (ind - 2 >= 0) {
+		token = nextPageToken[ind-2];
+		var url = "/result?next_page_token=" + token;
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("GET",url,false);
+		xmlhttp.send();
+		var ipr = xmlhttp.responseText;
+		var responseObj = JSON.parse(ipr);
+		responseObj.next_page_token = nextPageToken[ind-1];
+		ind = ind - 1;
+		formTable(responseObj,ind);
+	}
+	else {
+		var url = getUrl();
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("GET",url,false);
+		xmlhttp.send();
+		var ipr = xmlhttp.responseText;
+		var responseObj = JSON.parse(ipr);
+		formTable(responseObj,0);
+	}
+
+}
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};

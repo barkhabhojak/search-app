@@ -89,6 +89,11 @@ app.get('/result', (req, res) => {
 						request.get(url,function(error, response, body) {
 							if (error === null) {
 								var obj = JSON.parse(body);
+								obj.keyword = keyword;
+								obj.category = category;
+								obj.distance = distance/1609.34;
+								obj.loc = address;
+								obj.loc_opt = req.query.locOpt;
 								res.send(obj);
 							}
 						});
@@ -113,6 +118,10 @@ app.get('/result', (req, res) => {
 			request.get(url,function(error, response, body) {
 				if (error === null) {
 					var obj = JSON.parse(body);
+					obj.keyword = keyword;
+					obj.category = category;
+					obj.distance = distance/1609.34;
+					obj.loc_opt = 'curr-loc';
 					res.send(obj);
 				}
 			});

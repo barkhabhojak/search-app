@@ -18,6 +18,21 @@ h1 {
 	margin-bottom: 5px;
 }
 
+.btn-nxt {
+	text-align: center;
+}
+
+.btn-nxt button {
+	margin: 5px;
+	width: 72px;
+}
+
+.wrapper-div {
+	width: 85%;
+	margin: 0 auto;
+	margin-top: 15px;
+}
+
 style {
 	height: auto !important;
 }
@@ -68,6 +83,10 @@ label {
 		padding: 20px 50px 20px 30px;
 	}
     .wrapper {
+    	width: 90%;
+    	margin: 15px;
+    }
+    .wrapper-div {
     	width: 90%;
     	margin: 15px;
     }

@@ -11,7 +11,7 @@
 <body onload="getIpAddress()">
 	<div class="wrapper">
 		<h1>Travel and Entertainment Search</h1>
-		<form id="inputForm" action="/result">
+		<form id="inputForm">
 			<div class="form-group" id="keyGrp">
 				<div class="row">
 					<label for="keyword" class="col-md-4">Keyword<span class="req">*</span></label>
@@ -24,7 +24,7 @@
 			<div class="form-group">
 				<div class="row">
 					<label for="category" class="col-md-4">Category</label>
-					<select class="form-control col-md-4" name="category">
+					<select class="form-control col-md-4" name="category" id="cat">
 						<option selected>Default</option>
 						<option>Airport</option>
 						<option>Amusement Park</option>
@@ -79,7 +79,7 @@
 				</div>
 			</div>
 
-			<button type="submit" id="search" class="btn btn-primary" disabled onclick="return sub(this.form)"><i class="fa fa-search"></i> Search</button>
+			<button type="button" id="search" class="btn btn-primary" disabled onclick="submitForm()"><i class="fa fa-search"></i> Search</button>
 			<button type="clear" class="btn">Clear</button>
 
 		</form>
@@ -89,6 +89,8 @@
 		<button id="resultsBtn" class="btn btn-primary" >Results</button>
 		<button id="favoritesBtn" class="btn">Favorites</button>
 	</div>
+
+	<div id="res-area"></div>
 
 	<app-root></app-root>
 
