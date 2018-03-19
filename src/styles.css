@@ -1,1 +1,77 @@
-/* You can add global styles to this file, and also import other style files */
+.wrapper {
+	width: 700px;
+	margin: 0 auto;
+	margin-top: 5px;
+	border: 3px solid #d3d3d3;
+	background-color: #f8f8f8;
+	border-radius: 2%;
+}
+
+form {
+	padding: 10px 100px 10px 100px;
+}
+
+h1 {
+	text-align: center;
+	font-size: 22px;
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+style {
+	height: auto !important;
+}
+
+.btn {
+	padding: .2rem .45rem !important;
+	font-size: 14px;
+}
+.danger-error {
+	border: 1px solid red !important;
+}
+
+.form-group {
+	margin-bottom: 0.5rem !important;
+}
+
+.form-control {
+	font-size: 14px;
+	padding: .25rem .75rem !important;
+}
+
+label {
+	padding: 0 85px 0 60px;
+	font-size: 14px;
+}
+
+.req {
+	color: red;
+}
+
+.err {
+	display: none;
+	color: red;
+}
+
+#loc {
+	background-color: #e9ecef;
+}
+
+.btnArea {
+	text-align: center;
+	margin-top: 15px;
+}
+
+
+@media only screen and (max-width: 700px) {
+	form {
+		padding: 20px 50px 20px 30px;
+	}
+    .wrapper {
+    	width: 90%;
+    	margin: 15px;
+    }
+    label {
+		padding-left: 0 !important;
+	}
+}

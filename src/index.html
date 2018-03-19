@@ -1,14 +1,99 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Tempapp</title>
-  <base href="/">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+	<meta charset="utf-8">
+	<title>Search</title>
+	<base href="/">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
-<body>
-  <app-root></app-root>
+<body onload="getIpAddress()">
+	<div class="wrapper">
+		<h1>Travel and Entertainment Search</h1>
+		<form id="inputForm" action="/result">
+			<div class="form-group" id="keyGrp">
+				<div class="row">
+					<label for="keyword" class="col-md-4">Keyword<span class="req">*</span></label>
+					<div class="column col-md-8" style="padding-left: 0;">
+						<input type="text" class="form-control" id="keyword" name="keyw" onkeyup="enableSearch(1)">
+						<div class="err" id="err-key">Please enter a keyword.</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="row">
+					<label for="category" class="col-md-4">Category</label>
+					<select class="form-control col-md-4" name="category">
+						<option selected>Default</option>
+						<option>Airport</option>
+						<option>Amusement Park</option>
+						<option>Aquarium</option>
+						<option>Art Gallery</option>
+						<option>Bakery</option>
+						<option>Bar</option>
+						<option>Beauty Salon</option>
+						<option>Bowling Alley</option>
+						<option>Bus Station</option>
+						<option>Cafe</option>
+						<option>Campground</option>
+						<option>Car Rental</option>
+						<option>Casino</option>
+						<option>Lodging</option>
+						<option>Movie Theater</option>
+						<option>Museum</option>
+						<option>Night Club</option>
+						<option>Park</option>
+						<option>Parking</option>
+						<option>Restaurant</option>
+						<option>Shopping Mall</option>
+						<option>Stadium</option>
+						<option>Subway Station</option>
+						<option>Taxi Stand</option>
+						<option>Train Station</option>
+						<option>Transit Station</option>
+						<option>Travel Agency</option>
+						<option>Zoo</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="row">
+					<label for="distance" class="col-md-4">Distance (in miles)</label>
+					<input type="number" class="form-control col-md-4" id="dist" name="distance" placeholder="10">
+				</div>
+			</div>
+
+			<div class="form-group" id="locGrp" style="margin-bottom: 0">
+				<div class="row text-left">
+					<label class="col-md-4">From<span class="req">*</span></label>
+					<div class="column col-md-8" style="padding: 0">
+					    <div class="radio">
+					    	<label style="padding: 0; line-height: 0.5"><input type="radio" name="locOpt" id="currLocation" value="curr-loc" onclick="changeColor(false)" onchange="enableSearch(4)" checked> Current Location</label>
+					    </div>
+					    <div class="radio">
+					    	<label style="padding: 0; width: 100%"><input type="radio" name="locOpt" id="other-loc" value="other-loc" onclick="changeColor(true)"> Other. Please specify. <input style="margin-left: 20px" class="form-control" type="text" name="loc" id="loc" placeholder="Enter a location" onkeyup="enableSearch(3)" disabled>
+					    		<div style="margin-left: 20px" class="err" id="err-loc">Please enter a location.</div></label>
+					    </div>
+					</div>
+				</div>
+			</div>
+
+			<button type="submit" id="search" class="btn btn-primary" disabled onclick="return sub(this.form)"><i class="fa fa-search"></i> Search</button>
+			<button type="clear" class="btn">Clear</button>
+
+		</form>
+	</div>
+
+	<div class="btnArea">
+		<button id="resultsBtn" class="btn btn-primary" >Results</button>
+		<button id="favoritesBtn" class="btn">Favorites</button>
+	</div>
+
+	<app-root></app-root>
+
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDk5DWZ7G1sbHJJHUHKF7i-zSea8D5T-eQ&libraries=places"
+        async defer></script>
+
 </body>
 </html>
