@@ -133,14 +133,36 @@ function getUrl() {
 	return url;
 }
 
+function progressBarSim() {
+	var progress = document.getElementById('progress');
+	var counter = 5;
+	var pro = 25;
+
+	var id = setInterval(frame, 50);
+
+	function frame() {
+		if(pro === 500 && counter == 100) {
+			clearInterval(id);
+		} else {
+			pro += 5;
+			counter += 1;
+			var temp = pro/5;
+			console.log("check " + temp + "%");
+			progress.style.width = temp + "%";
+		}
+	}
+}
+
 function submitForm() {
+	document.getElementById('res-area').innerHTML = "<div class='progress'><div id='progress' class='progress-bar' role='progressbar' aria-valuemin='0' aria-valuemax='100'></div></div>";
+	progressBarSim();
 	var url = getUrl();
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.open("GET",url,false);
 	xmlhttp.send();
 	var ipr = xmlhttp.responseText;
 	var responseObj = JSON.parse(ipr);
-	formTable(responseObj,0);
+	var a = setTimeout(function() {formTable(responseObj,0);},5000);
 }
 
 function formTable(obj,ind) {
