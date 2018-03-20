@@ -3,6 +3,7 @@ var currLong = 0;
 var placeSearch;
 var autocomplete;
 var nextPageToken = [];
+var keyword, category, distance, loc, radioBtnChecked;
 
 function initAutocomplete() {
   autocomplete = new google.maps.places.Autocomplete(
@@ -121,6 +122,19 @@ function validateKey() {
 	}			
 }
 
+function saveValues() {
+	keyword = document.getElementById('keyword').value;
+	category = document.getElementById('cat').value;
+	distance =  document.getElementById('dist').value
+	if (document.getElementById('currLocation').checked == true) {
+		radioBtnChecked = "currLocation";
+	}
+	else {
+		radioBtnChecked = "other-loc";
+		loc = document.getElementById('loc').value;
+	}
+}
+
 function getUrl() {
 	var url = "";
 	if (document.getElementById('currLocation').checked == true) {
@@ -156,6 +170,7 @@ function progressBarSim() {
 function submitForm() {
 	document.getElementById('res-area').innerHTML = "<div class='progress'><div id='progress' class='progress-bar' role='progressbar' aria-valuemin='0' aria-valuemax='100'></div></div>";
 	progressBarSim();
+	saveValues();
 	var url = getUrl();
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.open("GET",url,false);

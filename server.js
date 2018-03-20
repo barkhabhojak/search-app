@@ -6,6 +6,8 @@ const app = express();
 const request = require('request');
 var router = express.Router();
 
+var keyword_global, category_global, distance_global, loc_global, radioBtnChecked_global;
+
 const placesKey = "AIzaSyAU5hyg6Ky-pOHejxe2u8trKteehGkSNrk";
 const geoKey = "AIzaSyBi3mS77HSSIOTdlIgpnsjzdUVJIindH8w";
 // Parsers
@@ -18,6 +20,10 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
+
+app.get('/parameters', (req,res) => {
+	res.send({'keyword' : keyword_global, 'category' : category_global, 'distance' : distance_global, 'location' : loc_global, 'radioChecked' : radioBtnChecked_global})
+})
 
 app.get('/ilike', function (req, res) {
 	console.log(req);
@@ -51,7 +57,9 @@ app.get('/result', (req, res) => {
 	    console.log(req.query.distance);
 	    console.log(req.query.locOpt);
 	    var keyword = req.query.keyw;
+	    keyword_global = req.query.keyw;
 	    var category = req.query.category.toLowerCase();
+	    category_global = req.query.category.toLowerCase();
 	    if (category.indexOf(' ') >= 0) {
 	    	category = category.replaceAll(' ','+');
 	    }
@@ -63,9 +71,12 @@ app.get('/result', (req, res) => {
 	    long = 0;
 	    if (req.query.distance !== '') {
 	    	distance = req.query.distance;
+	    	distance_global = req.query.distance;
 	    }
 	    if (req.query.locOpt === 'other-loc') {
 	    	var address = req.query.loc;
+	    	radioBtnChecked_global = "other-loc";
+	    	loc_global = address;
 			if (address.indexOf(' ') >= 0 || address.indexOf(',') >= 0) {
 				address = address.replaceAll(' ','+');
 				address = address.replaceAll(',','');
@@ -107,6 +118,7 @@ app.get('/result', (req, res) => {
 	    }
 	    else {
 	    	var a = req.query.locOpt.split('curr-loc-')[1];
+	    	radioBtnChecked_global = "curr-loc";
 	    	lat = a.split(',')[0];
 	    	long = a.split(',')[1];
 			distance = distance*1609.34;
