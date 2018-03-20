@@ -158,10 +158,9 @@ function progressBarSim() {
 		if(pro === 500 && counter == 100) {
 			clearInterval(id);
 		} else {
-			pro += 5;
-			counter += 1;
+			pro += 10;
+			counter += 2;
 			var temp = pro/5;
-			console.log("check " + temp + "%");
 			progress.style.width = temp + "%";
 		}
 	}
@@ -192,8 +191,9 @@ function formTable(obj,ind) {
 			tab += "<td>" + "<img src='" + obj.results[i].icon + "' style='height:25px;width:25px'>" + "</td>";
 			tab += "<td>" + obj.results[i].name + "</td>";
 			tab += "<td>" + obj.results[i].vicinity + "</td>";
+			var t = "" + obj.results[i].place_id;
 			tab += "<td>" + "<button class='btn'><i class='fa fa-star' style='font-size:20px'></i></button>" + "</td>";
-			tab += "<td>" + "<button class='btn'><i class='fa fa-arrow-right' style='font-size:20px'></i></button>" + "</td>";
+			tab += "<td>" + "<button class='btn'onclick=\"(getDetails('" + t + " '))\"><i class='fa fa-arrow-right' style='font-size:20px'></i></button>" + "</td>";
 			tab += "</tr>";
 		}
 
@@ -226,6 +226,12 @@ function formTable(obj,ind) {
 	else if (obj.status !== "OK") {
 		document.getElementById('res-area').innerHTML = "<div class='alert alert-danger wrapper-div'>Failed to get search results.</div>";
 	}
+
+}
+
+function getDetails(pid) {
+	console.log(pid);
+	console.log(document.getElementsByTagName('app-root')[0]);
 
 }
 
