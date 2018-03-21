@@ -23,6 +23,8 @@
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
+        "../node_modules/moment/min/moment.min.js",
+        "details.js",
         "client.js"
       ],
       "environmentSource": "environments/environment.ts",

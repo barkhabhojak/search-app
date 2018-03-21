@@ -4,12 +4,18 @@ var placeSearch;
 var autocomplete;
 var nextPageToken = [];
 var keyword, category, distance, loc, radioBtnChecked;
+var getI = false;
 
 function initAutocomplete() {
   autocomplete = new google.maps.places.Autocomplete(
 	(document.getElementById('loc')),
       {types: ['geocode']});
   autocomplete.addListener('place_changed', fillInAddress);
+}
+
+function clearBelow() {
+	document.getElementById('resArea').innerHTML = "";
+	document.getElementById('placeDetails').innerHTML = "";
 }
 
 function fillInAddress() {
@@ -48,6 +54,7 @@ function getIpAddress() {
 	currLong = ipJson.lon;
 	document.getElementById('currLocation').value = "curr-loc-" + ipJson.lat + "," + ipJson.lon;
 	//console.log("lat and long " + document.getElementById('other-loc').value);
+	getI = true;
 	initAutocomplete();
 }
 
@@ -69,7 +76,7 @@ function changeColor(truth) {
 function enableSearch(i) {
 	var a = validateLoc();
 	var b = validateKey();
-	if (a && b) {
+	if (a && b && getI) {
 		document.getElementById('search').disabled = false;
 	}
 	else {
@@ -167,7 +174,7 @@ function progressBarSim() {
 }
 
 function submitForm() {
-	document.getElementById('res-area').innerHTML = "<div class='progress'><div id='progress' class='progress-bar' role='progressbar' aria-valuemin='0' aria-valuemax='100'></div></div>";
+	document.getElementById('resArea').innerHTML = "<div class='progress'><div id='progress' class='progress-bar' role='progressbar' aria-valuemin='0' aria-valuemax='100'></div></div>";
 	progressBarSim();
 	saveValues();
 	var url = getUrl();
@@ -176,6 +183,8 @@ function submitForm() {
 	xmlhttp.send();
 	var ipr = xmlhttp.responseText;
 	var responseObj = JSON.parse(ipr);
+	document.getElementById('placeDetails').style.display = "none";
+	document.getElementById('resArea').style.display = "block";
 	var a = setTimeout(function() {formTable(responseObj,0);},5000);
 }
 
@@ -193,7 +202,8 @@ function formTable(obj,ind) {
 			tab += "<td>" + obj.results[i].vicinity + "</td>";
 			var t = "" + obj.results[i].place_id;
 			tab += "<td>" + "<button class='btn'><i class='fa fa-star' style='font-size:20px'></i></button>" + "</td>";
-			tab += "<td>" + "<button class='btn'onclick=\"(getDetails('" + t + " '))\"><i class='fa fa-arrow-right' style='font-size:20px'></i></button>" + "</td>";
+			// tab += "<td>" + "<button class='btn'onclick=\"(getDetails('" + t + " '))\"><i class='fa fa-arrow-right' style='font-size:20px'></i></button>" + "</td>";
+			tab += "<td>" + "<button class='btn'onclick=\"(getDetails('" + t + " '))\">></button>" + "</td>";
 			tab += "</tr>";
 		}
 
@@ -216,22 +226,16 @@ function formTable(obj,ind) {
 			tab += "</tbody></table></div>";
 		}
 
-		document.getElementById('res-area').innerHTML = tab;
+		document.getElementById('resArea').innerHTML = tab;
 	}
 
 	else if (obj.results.length === 0 || obj.status === 'ZERO_RESULTS') {
-		document.getElementById('res-area').innerHTML = "<div class='alert alert-warning wrapper-div'>No results found.</div>";
+		document.getElementById('resArea').innerHTML = "<div class='alert alert-warning wrapper-div'>No results found.</div>";
 	}
 
 	else if (obj.status !== "OK") {
-		document.getElementById('res-area').innerHTML = "<div class='alert alert-danger wrapper-div'>Failed to get search results.</div>";
+		document.getElementById('resArea').innerHTML = "<div class='alert alert-danger wrapper-div'>Failed to get search results.</div>";
 	}
-
-}
-
-function getDetails(pid) {
-	console.log(pid);
-	console.log(document.getElementsByTagName('app-root')[0]);
 
 }
 
