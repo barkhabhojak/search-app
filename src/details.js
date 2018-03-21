@@ -11,13 +11,24 @@ function getDetails(pid) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
       	document.getElementById('resArea').style.display = "none";
       	console.log(place);
-      	var a = getInfo(place);
-      	str += a;
+      	var b = getNav(place);
+      	str += b;
       	document.getElementById('placeDetails').innerHTML = str;
       	document.getElementById('placeDetails').style.display = "block";
       }
     });
 
+}
+
+function getNav(place) {
+	//navbar-light bg-light
+	var str = "<h1>" + place.name + "</h1>";
+	str += "<nav class='navbar navbar-light wrapper-nav navbar-expand-md bg-faded justify-content-center'> <a href='/' class='navbar-brand d-flex w-50 mr-auto'><i class='fa fa-left-arrow' style='font-size:20px'></i>List</a> <div> <ul class='nav navbar-nav ml-auto w-100 justify-content-end'> <li class='nav-item'> <a class='nav-link' href='#'><i class='fa fa-star' style='font-size:20px'></i></a> </li> <li class='nav-item'> <a class='nav-link' href='#'>Twitter</a> </li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
+	str += "<div class='tab-content' id='nav-tabContent'><div class='tab-pane fade show active' id='nav-info' role='tabpanel' aria-labelledby='nav-info-tab'>";
+	var a = getInfo(place);
+	str += a;
+	str += "</div></div><div class='tab-pane fade' id='nav-photos' role='tabpanel' aria-labelledby='nav-photos-tab'>Hello</div> <div class='tab-pane fade' id='nav-maps' role='tabpanel' aria-labelledby='nav-maps-tab'></div> <div class='tab-pane fade' id='nav-reviews' role='tabpanel' aria-labelledby='nav-reviews-tab'></div> </div></nav>";
+	return str;
 }
 
 function getStars(rating) {
