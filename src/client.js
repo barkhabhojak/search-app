@@ -5,6 +5,7 @@ var autocomplete;
 var nextPageToken = [];
 var keyword, category, distance, loc, radioBtnChecked;
 var getI = false;
+var detailsClickedAtLeastOnce = false;
 
 function initAutocomplete() {
   autocomplete = new google.maps.places.Autocomplete(
@@ -192,18 +193,19 @@ function formTable(obj,ind) {
 	console.log("index = ", ind);
 	console.log("obj = ", obj);
 	if (obj.status === "OK" && obj.results.length > 0) {
-		var tab = "<div class='wrapper-div'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
+		var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button disabled class='btn btn-light' id='totalDetailsBtn'>Details</button></div><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
 
 		for (var i = 0; i < obj.results.length; i++) {
 			var cnt = i+1+ind*20;
-			tab += "<tr><td scope='row'>"+ cnt +"</td>";
+			var idT = "row_" + i;
+			tab += "<tr id='row_" + cnt + "'><td scope='row'>"+ cnt +"</td>";
 			tab += "<td>" + "<img src='" + obj.results[i].icon + "' style='height:25px;width:25px'>" + "</td>";
 			tab += "<td>" + obj.results[i].name + "</td>";
 			tab += "<td>" + obj.results[i].vicinity + "</td>";
 			var t = "" + obj.results[i].place_id;
-			tab += "<td>" + "<button class='btn'><i class='fa fa-star' style='font-size:20px'></i></button>" + "</td>";
+			tab += "<td>" + "<button class='btn' onclick='check()'><i class='fa fa-star' style='font-size:20px'></i></button>" + "</td>";
 			// tab += "<td>" + "<button class='btn'onclick=\"(getDetails('" + t + " '))\"><i class='fa fa-arrow-right' style='font-size:20px'></i></button>" + "</td>";
-			tab += "<td>" + "<button class='btn'onclick=\"(getDetails('" + t + " '))\">></button>" + "</td>";
+			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn'onclick=\"(getDetails('" + t + "," + idT + " '))\">></button>" + "</td>";
 			tab += "</tr>";
 		}
 

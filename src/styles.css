@@ -18,6 +18,11 @@ h1 {
 	margin-bottom: 5px;
 }
 
+.detailsBtnTab {
+	display:flex;
+	justify-content:flex-end
+}
+
 .wrapper-nav {
 	width: 85%;
 	margin: 0 auto;

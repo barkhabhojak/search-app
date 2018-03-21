@@ -8,7 +8,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
-<body onload="getIpAddress()">
+<body onload="getIpAddress()" ng-app="searchApplication" ng-controller="mainController">
 	<div class="wrapper">
 		<h1>Travel and Entertainment Search</h1>
 		<form id="inputForm">
@@ -79,14 +79,14 @@
 				</div>
 			</div>
 
-			<button type="button" id="search" class="btn btn-primary" disabled onclick="submitForm()"><i class="fa fa-search"></i> Search</button>
+			<button type="button" id="search" ng-click='updateShow()' class="btn btn-primary" disabled onclick="submitForm()"><i class="fa fa-search"></i> Search</button>
 			<button type="clear" class="btn" onclick="clearBelow()">Clear</button>
 
 		</form>
 	</div>
 
 	<div class="btnArea">
-		<button id="resultsBtn" class="btn btn-primary" >Results</button>
+		<button id="resultsBtn" class="btn btn-primary">Results</button>
 		<button id="favoritesBtn" class="btn">Favorites</button>
 	</div>
 
@@ -95,8 +95,21 @@
  	<app-root></app-root>
 	<div id="placeDetails"></div>
 
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDk5DWZ7G1sbHJJHUHKF7i-zSea8D5T-eQ&libraries=places"
         async defer></script>
 
+
 </body>
 </html>
+
+
+<script>
+var app = angular.module('searchApplication', []);
+app.controller('mainController', function($scope) {
+    $scope.detailsShow = false;
+    $scope.tableShow = false;
+
+    $scope.updateShow = function() { console.log('hellocheck');$scope.tableShow = false;}
+});
+</script>
