@@ -101,13 +101,6 @@ label {
 	margin-bottom: 15px;
 }
 
-.ratings {
-    position: relative;
-    vertical-align: middle;
-    display: inline-block;
-    color: #b1b1b1;
-    overflow: hidden;
-}
 
 th {
 	font-size: 16px;
@@ -123,6 +116,32 @@ td {
 
 td a {
 	font-size: 14px;
+}
+
+.fa-trash {
+	color: black;
+	font-size: 20px;
+}
+
+.fa-star {
+	color: black;
+}
+
+.active-star {
+	color: #fdd444;
+}
+
+.ratings {
+    position: relative;
+    vertical-align: middle;
+    display: inline-block;
+    color: #b1b1b1;
+    overflow: hidden;
+}
+
+.btn-star:before {
+    content:"\2605";
+    font-size: 14pt;	
 }
 
 .full-stars {

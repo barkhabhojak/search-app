@@ -86,11 +86,13 @@
 	</div>
 
 	<div class="btnArea">
-		<button id="resultsBtn" class="btn btn-primary">Results</button>
-		<button id="favoritesBtn" class="btn">Favorites</button>
+		<button id="resultsBtn" class="btn btn-primary" onclick="toggleResFav(true)">Results</button>
+		<button id="favoritesBtn" class="btn" onclick="toggleResFav(false)">Favorites</button>
 	</div>
 
 	<div id="resArea"></div>
+
+	<div id="favoritesArea" style="display: none"></div>
 
  	<app-root></app-root>
 	<div id="placeDetails"></div>

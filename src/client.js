@@ -7,26 +7,16 @@ var keyword, category, distance, loc, radioBtnChecked;
 var getI = false;
 var detailsClickedAtLeastOnce = false;
 var toggle = true;
+var detailsHtml = [];
+var favoriteList = [];
+var prevClick = "";
 
+//Google autocomplete functions
 function initAutocomplete() {
   autocomplete = new google.maps.places.Autocomplete(
 	(document.getElementById('loc')),
       {types: ['geocode']});
   autocomplete.addListener('place_changed', fillInAddress);
-}
-
-function clearBelow() {
-	currLat = 0;
-	currLong = 0;
-	placeSearch;
-	autocomplete;
-	nextPageToken = [];
-	keyword, category, distance, loc, radioBtnChecked;
-	getI = false;
-	detailsClickedAtLeastOnce = false;
-	toggle = true;
-	document.getElementById('resArea').innerHTML = "";
-	document.getElementById('placeDetails').innerHTML = "";
 }
 
 function fillInAddress() {
@@ -49,6 +39,24 @@ function geolocate() {
   autocomplete.setBounds(circle.getBounds());
 }
 
+// Form related functions and validation
+function clearBelow() {
+	currLat = 0;
+	currLong = 0;
+	placeSearch;
+	autocomplete;
+	nextPageToken = [];
+	keyword, category, distance, loc, radioBtnChecked;
+	getI = false;
+	detailsClickedAtLeastOnce = false;
+	toggle = true;
+	detailsHtml = [];
+	favorites = [];
+	prevClick = "";
+	document.getElementById('resArea').innerHTML = "";
+	document.getElementById('placeDetails').innerHTML = "";
+}
+
 function getIpAddress() {
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.open("POST","http://ip-api.com/json",false);
@@ -67,8 +75,8 @@ function getIpAddress() {
 	//console.log("lat and long " + document.getElementById('other-loc').value);
 	getI = true;
 	initAutocomplete();
+  	updateFavPage();
 }
-
 
 function changeColor(truth) {
 	//console.log('changeColor ' + truth);
@@ -153,18 +161,7 @@ function saveValues() {
 	}
 }
 
-function getUrl() {
-	var url = "";
-	if (document.getElementById('currLocation').checked == true) {
-		url = "/result?keyw=" + document.getElementById('keyword').value + "&category=" + document.getElementById('cat').value + "&distance=" + document.getElementById('dist').value + "&locOpt=" + document.getElementById('currLocation').value
-	}
-	else {
-		url = "/result?keyw=" + document.getElementById('keyword').value + "&category=" + document.getElementById('cat').value + "&distance=" + document.getElementById('dist').value + "&locOpt=other-loc&loc=" + document.getElementById('loc').value;
-	}
-	url = url.replaceAll(' ','+');
-	return url;
-}
-
+//progress loading bar function
 function progressBarSim() {
 	var progress = document.getElementById('progress');
 	var counter = 5;
@@ -184,6 +181,20 @@ function progressBarSim() {
 	}
 }
 
+
+//post url according to form entries
+function getUrl() {
+	var url = "";
+	if (document.getElementById('currLocation').checked == true) {
+		url = "/result?keyw=" + document.getElementById('keyword').value + "&category=" + document.getElementById('cat').value + "&distance=" + document.getElementById('dist').value + "&locOpt=" + document.getElementById('currLocation').value
+	}
+	else {
+		url = "/result?keyw=" + document.getElementById('keyword').value + "&category=" + document.getElementById('cat').value + "&distance=" + document.getElementById('dist').value + "&locOpt=other-loc&loc=" + document.getElementById('loc').value;
+	}
+	url = url.replaceAll(' ','+');
+	return url;
+}
+
 function submitForm() {
 	document.getElementById('resArea').innerHTML = "<div class='progress'><div id='progress' class='progress-bar' role='progressbar' aria-valuemin='0' aria-valuemax='100'></div></div>";
 	progressBarSim();
@@ -199,6 +210,8 @@ function submitForm() {
 	var a = setTimeout(function() {formTable(responseObj,0);},5000);
 }
 
+
+//forming table and handling response
 function showTotalDetailsPage() {
 	if (toggle) {
 		document.getElementById('totalDetails').style.display = "block";
@@ -219,19 +232,26 @@ function formTable(obj,ind) {
 	console.log("index = ", ind);
 	console.log("obj = ", obj);
 	if (obj.status === "OK" && obj.results.length > 0) {
-		var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button disabled class='btn btn-light' id='totalDetailsBtn' onclick='showTotalDetailsPage()'>Details</button></div><div id='tableArea'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
+		var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button disabled class='btn btn-light disabled' id='totalDetailsBtn' onclick='showTotalDetailsPage()'>Details</button></div><div id='tableArea'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
 
 		for (var i = 0; i < obj.results.length; i++) {
 			var cnt = i+1+ind*20;
 			var idT = "row_" + cnt;
+			var btnID = "star_" + cnt;
 			tab += "<tr id='row_" + cnt + "'><td scope='row'>"+ cnt +"</td>";
 			tab += "<td>" + "<img src='" + obj.results[i].icon + "' style='height:25px;width:25px'>" + "</td>";
 			tab += "<td>" + obj.results[i].name + "</td>";
 			tab += "<td>" + obj.results[i].vicinity + "</td>";
 			var t = "" + obj.results[i].place_id;
-			tab += "<td>" + "<button class='btn' onclick='check()'><i class='fa fa-star' style='font-size:20px'></i></button>" + "</td>";
+			tab += "<td>" + "<button class='btn' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa fa-star' id='" + btnID + "' style='font-size:20px'></i></button>" + "</td>";
+			// var ab = true;
+
+			// tab += "<td>" + "<button class='btn' onclick=\"(addRemoveFav('" + idT + "','" + ab + "'))\"><i class='fa fa-star' id='" + btnID + "'></i></button>" + "</td>";
+
+			// tab += "<td>" + "<button class='btn' onclick=\"(addRemoveFav('" + idT + "'))\"><div><div class='ratings'><div class='btn-star'></div></div></div></button>" + "</td>";
+
 			// tab += "<td>" + "<button class='btn'onclick=\"(getDetails('" + t + " '))\"><i class='fa fa-arrow-right' style='font-size:20px'></i></button>" + "</td>";
-			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn'onclick=\"(getDetails('" + t + "','" + idT + "'))\">></button>" + "</td>";
+			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "'))\"> > </button>" + "</td>";
 			tab += "</tr>";
 		}
 
@@ -264,9 +284,10 @@ function formTable(obj,ind) {
 	else if (obj.status !== "OK") {
 		document.getElementById('resArea').innerHTML = "<div class='alert alert-danger wrapper-div'>Failed to get search results.</div>";
 	}
-
 }
 
+
+//pagination functions
 function getNextPage(str) {
 	console.log("next page");
 	var token = str.split(',')[0];
@@ -308,6 +329,73 @@ function getPrevPage(str) {
 
 }
 
+// Favorites
+
+function toggleResFav(to) {
+	if (to) {
+		document.getElementById('favoritesArea').style.display = "none";
+		document.getElementById('resArea').style.display = "block";
+		document.getElementById('favoritesBtn').classList.remove("btn-primary");
+		document.getElementById('resultsBtn').classList.add("btn-primary");
+	}
+	else {
+		document.getElementById('favoritesArea').style.display = "block";
+		document.getElementById('resArea').style.display = "none";
+		document.getElementById('favoritesBtn').classList.add("btn-primary");
+		document.getElementById('resultsBtn').classList.remove("btn-primary");
+	}
+}
+function addRemoveFav(rowID) {
+	var index = favoriteList.indexOf(rowID);
+	var ind = rowID.split('_')[1];
+	var btnID = "star_" + ind;
+	var detailBtnID = "details_" + btnID;
+	if (index > -1) {
+		document.getElementById(btnID).classList.remove('active-star');
+		if (document.getElementById(detailBtnID))
+			document.getElementById(detailBtnID).classList.remove('active-star');
+	    favoriteList.splice(index, 1);
+		updateFavPage();
+		return false;
+	}
+	else {
+		document.getElementById(btnID).classList.add('active-star');
+		if (document.getElementById(detailBtnID))
+			document.getElementById(detailBtnID).classList.add('active-star');
+		favoriteList.push(rowID);
+		updateFavPage();
+		return true;
+	}
+}
+
+
+function updateFavPage() {
+	if (favoriteList.length > 0) {
+		var html = "<div class='wrapper-div'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
+		for (var i = 0; i < favoriteList.length; i++) {
+			document.getElementById(favoriteList[i]).classList.remove('table-warning');
+			var str = document.getElementById(favoriteList[i]).outerHTML;
+			var starID = "star_" + favoriteList[i].split('_')[1];
+			var nID = "fav_" + starID;
+			var cnt = parseInt(i)+1;
+			var a = str.split('<td scope="row">')[0] + '<td scope="row">' + cnt + str.split('<td scope="row">')[1].substr(1);
+			a = a.replaceAll("fa fa-star","fa fa-trash");
+			a = a.replaceAll(starID,nID);
+			a = a.replaceAll('active-star','');
+			html += a;
+		}
+
+		html += "</tbody></table></div>";
+		document.getElementById('favoritesArea').innerHTML = html;		
+	}
+
+	else {
+		var html = "<div class='alert alert-warning wrapper-div'>No favorites.</div>";;
+		document.getElementById('favoritesArea').innerHTML = html;
+	}
+}
+
+//helper functions
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);

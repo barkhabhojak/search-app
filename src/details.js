@@ -1,14 +1,11 @@
-var detailsHtml = [];
-var favorites = [];
-var prevClick = "";
-
 function checkDetailsBtn() {
-	console.log('checkDetailsBtn');
 	if (detailsClickedAtLeastOnce) {
+		document.getElementById('totalDetailsBtn').classList.remove('disabled');
 		document.getElementById('totalDetailsBtn').disabled = false;
 	}
 	else {
-		document.getElementById('totalDetailsBtn').disabled = true;		
+		document.getElementById('totalDetailsBtn').classList.add('disabled');
+		document.getElementById('totalDetailsBtn').disabled = true;
 	}
 }
 
@@ -18,8 +15,12 @@ function updateTotalDetails() {
 	for (var i = 0; i < detailsHtml.length; i++) {
 		document.getElementById(detailsHtml[i]).classList.remove('table-warning');
 		var str = document.getElementById(detailsHtml[i]).outerHTML;
+		var starID = "star_" + detailsHtml[i].split('_')[1];
+		var nID = "details_" + starID;
 		var cnt = parseInt(i)+1;
-		html += str.split('<td scope="row">')[0] + '<td scope="row">' + cnt + str.split('<td scope="row">')[1].substr(1);
+		var a = str.split('<td scope="row">')[0] + '<td scope="row">' + cnt + str.split('<td scope="row">')[1].substr(1);
+		a = a.replaceAll(starID,nID);
+		html += a;
 	}
 
 	html += "</tbody></table></div>";
@@ -35,8 +36,6 @@ function getDetails(pid,rowID) {
 	detailsHtml.push(rowID);
 	detailsHtml = detailsHtml.filter(onlyUnique);
 	updateTotalDetails();
-	console.log('detailsHtml = ', detailsHtml);
-	console.log('details prevClick = ', prevClick);
 	if (prevClick !== "") {
 		updatePrevClick(rowID);
 	}
@@ -44,8 +43,6 @@ function getDetails(pid,rowID) {
 		prevClick = rowID;
 	}
 	checkDetailsBtn();
-	
-	console.log(pid);
 	var str = "";
 	pid = pid.replace(/\s/g,'');
 
@@ -86,18 +83,27 @@ function goBackToTable(rowID) {
 	document.getElementById(rowID).classList.add('table-warning');
 }
 
-function getNav(place,rowID) {
-	//navbar-light bg-light
-	var str = "<h1>" + place.name + "</h1>";
-	// str += "<nav class='navbar navbar-light wrapper-nav navbar-expand-md bg-faded justify-content-center'> <a href='/' class='navbar-brand d-flex w-50 mr-auto'>";
-	// str += "<i class='fa fa-left-arrow' style='font-size:20px'></i>List</a><div> <ul class='nav navbar-nav ml-auto w-100 justify-content-end'> <li class='nav-item'>"
+function fav(rowID) {
+	var a = addRemoveFav(rowID);
+	if (a) {
+		document.getElementById('nav-star').classList.add('active-star');
+	}
+	else {
+		document.getElementById('nav-star').classList.remove('active-star');
+	}
+}
 
+function getNav(place,rowID) {
+	var str = "<h1>" + place.name + "</h1>";
 	str += "<nav class='navbar navbar-light wrapper-nav navbar-expand-md bg-faded justify-content-center'>";
 	str += "<button class='btn d-flex w-50 mr-auto' onclick=\"(goBackToTable('" + rowID + " '))\">";
 	str += "<i class='fa fa-left-arrow' style='font-size:20px'></i>List</button><div> <ul class='nav navbar-nav ml-auto w-100 justify-content-end'> <li class='nav-item'>"
-
-
-	str += "<a class='nav-link' href='#'><i class='fa fa-star' style='font-size:20px'></i></a> </li> <li class='nav-item'> <a class='nav-link' href='#'>Twitter</a> </li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
+	if (favoriteList.indexOf(rowID) > -1) {
+		str += "<a class='nav-link' href='#'><i id='nav-star' class='fa fa-star active-star' onclick=\"(fav('" + rowID + "'))\"></i></a> </li> <li class='nav-item'> <a class='nav-link' href='#'>Twitter</a> </li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
+	}
+	else {
+		str += "<a class='nav-link' href='#'><i id='nav-star' class='fa fa-star' onclick=\"(fav('" + rowID + "'))\"></i></a> </li> <li class='nav-item'> <a class='nav-link' href='#'>Twitter</a> </li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
+	}
 	str += "<div class='tab-content' id='nav-tabContent'><div class='tab-pane fade show active' id='nav-info' role='tabpanel' aria-labelledby='nav-info-tab'>";
 	var a = getInfo(place);
 	str += a;
@@ -107,8 +113,6 @@ function getNav(place,rowID) {
 
 function getStars(rating) {
 	var percent = rating*100/5;
-	console.log("rating = ",rating);
-	console.log("percent = ",percent);
 	var str = "<div class='ratings'><div class='empty-stars'></div><div class='full-stars' style='width:" + percent + "%''></div></div>";
 	return str;
 }
@@ -155,8 +159,6 @@ function getInfo(places) {
 		if (places.opening_hours.open_now) {
 			hours += "<b>Open now</b>: ";
 			var day = moment().day();
-			console.log("day = ", day);
-
 			var currDay = places.opening_hours.weekday_text[day];
 			currDay = currDay.split('y:')[1];
 			hours += currDay;
