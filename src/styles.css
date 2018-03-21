@@ -18,6 +18,10 @@ h1 {
 	margin-bottom: 5px;
 }
 
+#totalDetails {
+	display: none;
+}
+
 .detailsBtnTab {
 	display:flex;
 	justify-content:flex-end
@@ -144,14 +148,13 @@ td a {
         color: #ECBE24;
     }
 }
- <!--[if IE]> .full-stars {
-    color: #ECBE24;
-}
-<![endif]-->
 
 @media only screen and (max-width: 700px) {
 	form {
 		padding: 20px 50px 20px 30px;
+	}
+	#resArea, #placeDetails {
+		width: 100%;
 	}
     .wrapper {
     	width: 90%;

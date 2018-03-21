@@ -1,4 +1,50 @@
-function getDetails(pid) {
+var detailsHtml = [];
+var favorites = [];
+var prevClick = "";
+
+function checkDetailsBtn() {
+	console.log('checkDetailsBtn');
+	if (detailsClickedAtLeastOnce) {
+		document.getElementById('totalDetailsBtn').disabled = false;
+	}
+	else {
+		document.getElementById('totalDetailsBtn').disabled = true;		
+	}
+}
+
+function updateTotalDetails() {
+	var html = "<div class='wrapper-div'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
+
+	for (var i = 0; i < detailsHtml.length; i++) {
+		document.getElementById(detailsHtml[i]).classList.remove('table-warning');
+		var str = document.getElementById(detailsHtml[i]).outerHTML;
+		var cnt = parseInt(i)+1;
+		html += str.split('<td scope="row">')[0] + '<td scope="row">' + cnt + str.split('<td scope="row">')[1].substr(1);
+	}
+
+	html += "</tbody></table></div>";
+	document.getElementById('totalDetails').innerHTML = html;
+}
+
+function onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
+}
+
+function getDetails(pid,rowID) {
+	detailsClickedAtLeastOnce = true;
+	detailsHtml.push(rowID);
+	detailsHtml = detailsHtml.filter(onlyUnique);
+	updateTotalDetails();
+	console.log('detailsHtml = ', detailsHtml);
+	console.log('details prevClick = ', prevClick);
+	if (prevClick !== "") {
+		updatePrevClick(rowID);
+	}
+	else {
+		prevClick = rowID;
+	}
+	checkDetailsBtn();
+	
 	console.log(pid);
 	var str = "";
 	pid = pid.replace(/\s/g,'');
@@ -8,10 +54,14 @@ function getDetails(pid) {
     service.getDetails({
       placeId: pid
     }, function(place, status) {
+    	console.log('hello');
+    	console.log(place);
+    	console.log(status);
       if (status === google.maps.places.PlacesServiceStatus.OK) {
       	document.getElementById('resArea').style.display = "none";
+      	document.getElementById('totalDetails').style.display = "none";
       	console.log(place);
-      	var b = getNav(place);
+      	var b = getNav(place,rowID);
       	str += b;
       	document.getElementById('placeDetails').innerHTML = str;
       	document.getElementById('placeDetails').style.display = "block";
@@ -20,10 +70,34 @@ function getDetails(pid) {
 
 }
 
-function getNav(place) {
+function updatePrevClick(rowID) {
+	console.log('updatePrevClick');
+	document.getElementById(prevClick).classList.remove('table-warning');
+	prevClick = rowID;
+}
+
+function goBackToTable(rowID) {
+	document.getElementById('placeDetails').style.display = "none";
+	document.getElementById('totalDetails').style.display = "none;"
+	document.getElementById('resArea').style.display = "block";
+	document.getElementById('tableArea').style.display = "block";
+	rowID = rowID.replace(/\s/g,'');
+	console.log('goBackToTable rowID = ', rowID);
+	document.getElementById(rowID).classList.add('table-warning');
+}
+
+function getNav(place,rowID) {
 	//navbar-light bg-light
 	var str = "<h1>" + place.name + "</h1>";
-	str += "<nav class='navbar navbar-light wrapper-nav navbar-expand-md bg-faded justify-content-center'> <a href='/' class='navbar-brand d-flex w-50 mr-auto'><i class='fa fa-left-arrow' style='font-size:20px'></i>List</a> <div> <ul class='nav navbar-nav ml-auto w-100 justify-content-end'> <li class='nav-item'> <a class='nav-link' href='#'><i class='fa fa-star' style='font-size:20px'></i></a> </li> <li class='nav-item'> <a class='nav-link' href='#'>Twitter</a> </li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
+	// str += "<nav class='navbar navbar-light wrapper-nav navbar-expand-md bg-faded justify-content-center'> <a href='/' class='navbar-brand d-flex w-50 mr-auto'>";
+	// str += "<i class='fa fa-left-arrow' style='font-size:20px'></i>List</a><div> <ul class='nav navbar-nav ml-auto w-100 justify-content-end'> <li class='nav-item'>"
+
+	str += "<nav class='navbar navbar-light wrapper-nav navbar-expand-md bg-faded justify-content-center'>";
+	str += "<button class='btn d-flex w-50 mr-auto' onclick=\"(goBackToTable('" + rowID + " '))\">";
+	str += "<i class='fa fa-left-arrow' style='font-size:20px'></i>List</button><div> <ul class='nav navbar-nav ml-auto w-100 justify-content-end'> <li class='nav-item'>"
+
+
+	str += "<a class='nav-link' href='#'><i class='fa fa-star' style='font-size:20px'></i></a> </li> <li class='nav-item'> <a class='nav-link' href='#'>Twitter</a> </li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
 	str += "<div class='tab-content' id='nav-tabContent'><div class='tab-pane fade show active' id='nav-info' role='tabpanel' aria-labelledby='nav-info-tab'>";
 	var a = getInfo(place);
 	str += a;
@@ -99,7 +173,6 @@ function getInfo(places) {
 	str += "</div></table>";
 
 	if (a) {
-		console.log('hello true');
 		str += "<div class='modal fade' tabindex='-1' role='dialog' id='dailyHoursModal'><div class='modal-dialog' role='document'><div class='modal-content'><div class='modal-header'><h5 class='modal-title'>Open Hours</h5><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div><div class='modal-body'>";
 		str += "<table class='table'>"
 		var dayW = moment().day();

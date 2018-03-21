@@ -6,6 +6,7 @@ var nextPageToken = [];
 var keyword, category, distance, loc, radioBtnChecked;
 var getI = false;
 var detailsClickedAtLeastOnce = false;
+var toggle = true;
 
 function initAutocomplete() {
   autocomplete = new google.maps.places.Autocomplete(
@@ -15,6 +16,15 @@ function initAutocomplete() {
 }
 
 function clearBelow() {
+	currLat = 0;
+	currLong = 0;
+	placeSearch;
+	autocomplete;
+	nextPageToken = [];
+	keyword, category, distance, loc, radioBtnChecked;
+	getI = false;
+	detailsClickedAtLeastOnce = false;
+	toggle = true;
 	document.getElementById('resArea').innerHTML = "";
 	document.getElementById('placeDetails').innerHTML = "";
 }
@@ -189,15 +199,31 @@ function submitForm() {
 	var a = setTimeout(function() {formTable(responseObj,0);},5000);
 }
 
+function showTotalDetailsPage() {
+	if (toggle) {
+		document.getElementById('totalDetails').style.display = "block";
+		document.getElementById('tableArea').style.display = "none";
+	}
+	else {
+		for (var i = 0; i < detailsHtml.length; i++) {
+			document.getElementById(detailsHtml[i]).classList.remove('table-warning');
+		}
+		document.getElementById('totalDetails').style.display = "none";
+		document.getElementById('tableArea').style.display = "block";		
+	}
+	document.getElementById('placeDetails').style.display = "none";
+	toggle = !toggle;
+}
+
 function formTable(obj,ind) {
 	console.log("index = ", ind);
 	console.log("obj = ", obj);
 	if (obj.status === "OK" && obj.results.length > 0) {
-		var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button disabled class='btn btn-light' id='totalDetailsBtn'>Details</button></div><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
+		var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button disabled class='btn btn-light' id='totalDetailsBtn' onclick='showTotalDetailsPage()'>Details</button></div><div id='tableArea'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
 
 		for (var i = 0; i < obj.results.length; i++) {
 			var cnt = i+1+ind*20;
-			var idT = "row_" + i;
+			var idT = "row_" + cnt;
 			tab += "<tr id='row_" + cnt + "'><td scope='row'>"+ cnt +"</td>";
 			tab += "<td>" + "<img src='" + obj.results[i].icon + "' style='height:25px;width:25px'>" + "</td>";
 			tab += "<td>" + obj.results[i].name + "</td>";
@@ -205,27 +231,27 @@ function formTable(obj,ind) {
 			var t = "" + obj.results[i].place_id;
 			tab += "<td>" + "<button class='btn' onclick='check()'><i class='fa fa-star' style='font-size:20px'></i></button>" + "</td>";
 			// tab += "<td>" + "<button class='btn'onclick=\"(getDetails('" + t + " '))\"><i class='fa fa-arrow-right' style='font-size:20px'></i></button>" + "</td>";
-			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn'onclick=\"(getDetails('" + t + "," + idT + " '))\">></button>" + "</td>";
+			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn'onclick=\"(getDetails('" + t + "','" + idT + "'))\">></button>" + "</td>";
 			tab += "</tr>";
 		}
 
 		if (obj.next_page_token !== undefined && ind === 0) {
 			nextPageToken[ind] = obj.next_page_token;
 			var temp = obj.next_page_token + "," + ind;
-			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div>"
+			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div></div>"
 		}
 		else if (obj.next_page_token !== undefined && ind !== 0) {
 			nextPageToken[ind] = obj.next_page_token;
 			var temp = obj.next_page_token + "," + ind;
-			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "<button class='btn' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div>"
+			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "<button class='btn' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div></div>"
 
 		}
 		else if (ind !== 0 && obj.next_page_token === undefined) {
 			var temp = obj.next_page_token + "," + ind;
-			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "</div></div>"
+			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "</div></div></div>"
 		}
 		else {
-			tab += "</tbody></table></div>";
+			tab += "</tbody></table></div></div>";
 		}
 
 		document.getElementById('resArea').innerHTML = tab;
