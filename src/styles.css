@@ -94,6 +94,23 @@ label {
     color: #b1b1b1;
     overflow: hidden;
 }
+
+th {
+	font-size: 16px;
+}
+
+.table td, .table th {
+	padding: 0.5rem;
+}
+
+td {
+	font-size: 14px;
+}
+
+td a {
+	font-size: 14px;
+}
+
 .full-stars {
     position: absolute;
     left: 0;
