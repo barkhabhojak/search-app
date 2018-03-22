@@ -53,6 +53,7 @@ function clearBelow() {
 	detailsHtml = [];
 	favorites = [];
 	prevClick = "";
+	reviewsArrGoogle = [];
 	document.getElementById('resArea').innerHTML = "";
 	document.getElementById('placeDetails').innerHTML = "";
 }

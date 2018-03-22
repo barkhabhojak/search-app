@@ -1,3 +1,6 @@
+var reviewsArrGoogle = [];
+var reviewsArrGoogleBack = [];
+
 function checkDetailsBtn() {
 	if (detailsClickedAtLeastOnce) {
 		document.getElementById('totalDetailsBtn').classList.remove('disabled');
@@ -48,11 +51,12 @@ function getDetails(pid,rowID,entryPoint) {
 	pid = pid.replace(/\s/g,'');
 
     var service = new google.maps.places.PlacesService(document.createElement('div'));
-
+    console.log("pid = ", pid);
     service.getDetails({
       placeId: pid
     }, function(place, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
+      	console.log("OK object");
       	document.getElementById('resArea').style.display = "none";
       	document.getElementById('totalDetails').style.display = "none";
       	document.getElementById('favoritesArea').style.display = "none";
@@ -62,7 +66,6 @@ function getDetails(pid,rowID,entryPoint) {
       	document.getElementById('placeDetails').style.display = "block";
       }
     });
-
 }
 
 function updatePrevClick(rowID) {
@@ -130,7 +133,7 @@ function getNav(place,rowID,entryPoint) {
 	var a = getInfo(place);
 	str += a;
 	str += "</div></div><div class='tab-pane fade' id='nav-photos' role='tabpanel' aria-labelledby='nav-photos-tab'>"
-	var b = getPhotos(place.photos);
+	var b = getPhotos(place);
 	str += b;
 	str += "</div><div class='tab-pane fade' id='nav-maps' role='tabpanel' aria-labelledby='nav-maps-tab'>";
 	str += "</div> <div class='tab-pane fade' id='nav-reviews' role='tabpanel' aria-labelledby='nav-reviews-tab'>";
@@ -140,34 +143,77 @@ function getNav(place,rowID,entryPoint) {
 	return str;
 }
 
+function sortByKey(array, key, type) {
+	var narr = array.slice();
+    return narr.sort(function(a, b) {
+        var x = a[key]; var y = b[key];
+        return x - y;
+    });
+}
+
+function showReviewsList(arr) {
+	console.log("showReviewsList arr = ", arr);
+	var html = "";
+	for (var i = 0; i < arr.length; i++) {
+		html += "<div class='card-review row'>";
+		html += "<div class='profile-pic-div'><a href='" + arr[i].author_url + "' target='_blank'><img class='profile-pic' src='" + arr[i].profile_photo_url + "'></a></div>";
+		html += "<div class='col'>";
+		html += "<div class='row'><a class='review-name' href='" + arr[i].author_url + "' target='_blank'>" + arr[i].author_name + "</a></div>";
+		html += "<div class='row'>"
+		for (var j = 0; j < parseInt(arr[i].rating); j++) {
+			html += "<i class='fa fa-star rating-star-review'></i>";
+		}
+
+		var temp = "" + moment(parseInt(arr[i].time)*1000).format("YYYY-MM-DD H:mm:ss");
+		html += "<p class='time-review'>" + temp + "</p>";
+		html += "</div>";
+		html += "<div class='row'><p class='reviews-text'>" + arr[i].text + "</p></div>";
+		html += "</div>";
+		html += "</div>";
+	}
+	return html;
+}
+
+function sortParam(type) {
+	if (type === 'most-recent') {
+		var a = reviewsArrGoogle;
+		a = sortByKey(a,"time");
+		document.getElementById('google-reviews').innerHTML = showReviewsList(a.slice().reverse());
+	}
+	if (type === 'least-recent') {
+		var a = reviewsArrGoogle;
+		a = sortByKey(a,"time");
+		document.getElementById('google-reviews').innerHTML = showReviewsList(a);
+	}
+	if (type === 'most-rated') {
+		var a = reviewsArrGoogle;
+		a = sortByKey(a,"rating");
+		document.getElementById('google-reviews').innerHTML = showReviewsList(a.slice().reverse());
+	}
+	if (type === 'least-rated') {
+		var a = reviewsArrGoogle;
+		a = sortByKey(a,"rating");
+		document.getElementById('google-reviews').innerHTML = showReviewsList(a);
+	}
+	if (type === 'default') {
+		console.log("default");
+		document.getElementById('google-reviews').innerHTML = showReviewsList(reviewsArrGoogleBack);
+	}
+}
+
 function getReviews(place) {
 	var html = "";
 	console.log("reviews = ", place);
 	html += "<div class='row'>";
 	html += "<div class='dropdown show'> <a class='btn btn-secondary dropdown-toggle' href='#google-reviews' role='button' id='dropdownReviewsSource' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> Google Reviews </a> <div class='dropdown-menu' aria-labelledby='dropdownReviewsSource'> <a class='dropdown-item' href='#yelp-reviews'>Yelp Reviews</a> <a class='dropdown-item' href='#'>Another action</a> <a class='dropdown-item' href='#'>Something else here</a> </div> </div>";
-	html += "<div class='dropdown show'> <a class='btn btn-secondary dropdown-toggle' href='#' role='button' id='dropdownSortType' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> Default Order </a> <div class='dropdown-menu' aria-labelledby='dropdownSortType'> <a class='dropdown-item' href='#'>Highest Rating</a> <a class='dropdown-item' href='#'>Lowest Rating</a> <a class='dropdown-item' href='#'>Most Recent</a> <a class='dropdown-item' href='#'>Least Recent</a> </div> </div>";
+	html += "<div class='dropdown show'> <a class='btn btn-secondary dropdown-toggle' role='button' id='dropdownSortType' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onclick=\"(sortParam('default'))\"> Default Order </a> <div class='dropdown-menu' aria-labelledby='dropdownSortType'> <a class='dropdown-item' onclick=\"(sortParam('most-rated'))\">Highest Rating</a> <a class='dropdown-item' onclick=\"(sortParam('least-rated'))\">Lowest Rating</a> <a class='dropdown-item' onclick=\"(sortParam('most-recent'))\">Most Recent</a> <a class='dropdown-item' onclick=\"(sortParam('least-recent'))\">Least Recent</a></div></div>";
 	html += "</div>";
-
-	if (place.reviews.length > 0) {
+	if (place.reviews && place.reviews.length > 0) {
+		reviewsArrGoogle = place.reviews;
+		reviewsArrGoogleBack = place.reviews;
 		html += "<div id='google-reviews'>";
-		for (var i = 0; i < place.reviews.length; i++) {
-			html += "<div class='card-review row'>";
-			html += "<div class='profile-pic-div'><a href='" + place.reviews[i].author_url + "' target='_blank'><img class='profile-pic' src='" + place.reviews[i].profile_photo_url + "'></a></div>";
-			html += "<div class='col'>";
-			html += "<div class='row'><a class='review-name' href='" + place.reviews[i].author_url + "' target='_blank'>" + place.reviews[i].author_name + "</a></div>";
-			html += "<div class='row'>"
-			for (var j = 0; j < parseInt(place.reviews[i].rating); j++) {
-				html += "<i class='fa fa-star rating-star-review'></i>";
-			}
-
-			var temp = "" + moment(parseInt(place.reviews[i].time)*1000).format("YYYY-MM-DD H:mm:ss");
-			html += "<p class='time-review'>" + temp + "</p>";
-			html += "</div>";
-			html += "<div class='row'><p class='reviews-text'>" + place.reviews[i].text + "</p></div>";
-			html += "</div>";
-			html += "</div>";
-		}
-		html += "</div>";
+		html += showReviewsList(reviewsArrGoogleBack);
+		html += "</div>"
 	}
 	else {
 		html = "<div id='google-reviews' class='alert alert-warning wrapper-div'>No reviews.</div>";
@@ -175,13 +221,13 @@ function getReviews(place) {
 	return html;
 }
 
-function getPhotos(photos) {
+function getPhotos(place) {
 	var html = "";
-	if (photos.length > 0) {
+	if (place.photos && place.photos.length > 0) {
 		html += "<div><div class='row'>";
-		for (var i = 0; i < photos.length; i++) {
+		for (var i = 0; i < place.photos.length; i++) {
 			html += "<div class='col-md-3 col-12'>";
-			var str = photos[i].getUrl({'maxWidth': photos[i].width, 'maxHeight': photos[i].height});
+			var str = place.photos[i].getUrl({'maxWidth': place.photos[i].width, 'maxHeight': place.photos[i].height});
 			//console.log("url = ", str);
 			html += "<a target='_blank' href='" + str + "'><img src='" + str + "' class='img-fluid'></a>";
 			html += "</div>";
@@ -189,7 +235,7 @@ function getPhotos(photos) {
 		html += "</div></div>";
 	}
 	else {
-		html = "<div class='alert alert-warning wrapper-div'>No photos.</div>";
+		html = "<div class='alert alert-warning wrapper-div'>No place.photos.</div>";
 	}
 	return html;
 }
