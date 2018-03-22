@@ -127,6 +127,10 @@ td a {
 	color: black;
 }
 
+div.col-md-3.col-12 {
+	padding: 15px;
+}
+
 a.dailyHoursLink{
 	text-decoration: underline !important;
 	color: #007bff !important;

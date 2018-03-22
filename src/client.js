@@ -392,7 +392,7 @@ function updateFavPage() {
 	}
 
 	else {
-		var html = "<div class='alert alert-warning wrapper-div'>No favorites.</div>";;
+		var html = "<div class='alert alert-warning wrapper-div'>No favorites.</div>";
 		document.getElementById('favoritesArea').innerHTML = html;
 	}
 }

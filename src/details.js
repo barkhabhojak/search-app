@@ -52,14 +52,10 @@ function getDetails(pid,rowID,entryPoint) {
     service.getDetails({
       placeId: pid
     }, function(place, status) {
-    	console.log('hello');
-    	console.log(place);
-    	console.log(status);
       if (status === google.maps.places.PlacesServiceStatus.OK) {
       	document.getElementById('resArea').style.display = "none";
       	document.getElementById('totalDetails').style.display = "none";
       	document.getElementById('favoritesArea').style.display = "none";
-      	console.log(place);
       	var b = getNav(place,rowID,entryPoint);
       	str += b;
       	document.getElementById('placeDetails').innerHTML = str;
@@ -133,8 +129,32 @@ function getNav(place,rowID,entryPoint) {
 	str += "<div class='tab-content' id='nav-tabContent'><div class='tab-pane fade show active' id='nav-info' role='tabpanel' aria-labelledby='nav-info-tab'>";
 	var a = getInfo(place);
 	str += a;
-	str += "</div></div><div class='tab-pane fade' id='nav-photos' role='tabpanel' aria-labelledby='nav-photos-tab'>Hello</div> <div class='tab-pane fade' id='nav-maps' role='tabpanel' aria-labelledby='nav-maps-tab'></div> <div class='tab-pane fade' id='nav-reviews' role='tabpanel' aria-labelledby='nav-reviews-tab'></div> </div></nav>";
+	str += "</div></div><div class='tab-pane fade' id='nav-photos' role='tabpanel' aria-labelledby='nav-photos-tab'>"
+	var b = getPhotos(place.photos);
+	str += b;
+	str += "</div><div class='tab-pane fade' id='nav-maps' role='tabpanel' aria-labelledby='nav-maps-tab'></div> <div class='tab-pane fade' id='nav-reviews' role='tabpanel' aria-labelledby='nav-reviews-tab'></div> </div></nav>";
 	return str;
+}
+
+function getPhotos(photos) {
+	console.log("photos = ", photos);
+	console.log("photos length = ", photos.length);
+	var html = "";
+	if (photos.length > 0) {
+		html += "<div><div class='row'>";
+		for (var i = 0; i < photos.length; i++) {
+			html += "<div class='col-md-3 col-12'>";
+			var str = photos[i].getUrl({'maxWidth': photos[i].width, 'maxHeight': photos[i].height});
+			//console.log("url = ", str);
+			html += "<a target='_blank' href='" + str + "'><img src='" + str + "' class='img-fluid'></a>";
+			html += "</div>";
+		}
+		html += "</div></div>";
+	}
+	else {
+		html = "<div class='alert alert-warning wrapper-div'>No photos found.</div>";
+	}
+	return html;
 }
 
 function getStars(rating) {
@@ -187,10 +207,10 @@ function getInfo(places) {
 			var day = moment().day();
 			var currDay = places.opening_hours.weekday_text[day];
 			currDay = currDay.split('y:')[1];
-			hours += currDay + "   ";
+			hours += currDay + "     ";
 		}
 		else {
-			hours += "<b>Closed   </b>";
+			hours += "<b>Closed     </b>";
 		}
     	hours += "<a class='dailyHoursLink' data-toggle='modal' data-target='#dailyHoursModal'>Daily Open Hours</a>"
 		//hours += "  <a data-toggle='modal' data-target='#dailyHoursModal'> Daily open hours</a>";
