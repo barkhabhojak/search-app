@@ -328,16 +328,19 @@ function getPrevPage(str) {
 function toggleResFav(to) {
 	if (to) {
 		document.getElementById('favoritesArea').style.display = "none";
+		document.getElementById('placeDetails').style.display = "none";
+		document.getElementById('totalDetails').style.display = "none";
 		document.getElementById('resArea').style.display = "block";
+		document.getElementById('tableArea').style.display = "block";
 		document.getElementById('favoritesBtn').classList.remove("btn-primary");
 		document.getElementById('resultsBtn').classList.add("btn-primary");
-		document.getElementById('tableArea').style.display = "block";
 	}
 	else {
 		document.getElementById('favoritesArea').style.display = "block";
 		document.getElementById('resArea').style.display = "none";
 		document.getElementById('tableArea').style.display = "none";
-		//document.getElementById('totalDetails').style.display = "none";
+		document.getElementById('totalDetails').style.display = "none";
+		document.getElementById('placeDetails').style.display = "none";
 		document.getElementById('favoritesBtn').classList.add("btn-primary");
 		document.getElementById('resultsBtn').classList.remove("btn-primary");
 	}
