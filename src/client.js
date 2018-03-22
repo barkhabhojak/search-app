@@ -244,14 +244,8 @@ function formTable(obj,ind) {
 			tab += "<td>" + obj.results[i].vicinity + "</td>";
 			var t = "" + obj.results[i].place_id;
 			tab += "<td>" + "<button class='btn' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa fa-star' id='" + btnID + "' style='font-size:20px'></i></button>" + "</td>";
-			// var ab = true;
-
-			// tab += "<td>" + "<button class='btn' onclick=\"(addRemoveFav('" + idT + "','" + ab + "'))\"><i class='fa fa-star' id='" + btnID + "'></i></button>" + "</td>";
-
-			// tab += "<td>" + "<button class='btn' onclick=\"(addRemoveFav('" + idT + "'))\"><div><div class='ratings'><div class='btn-star'></div></div></div></button>" + "</td>";
-
-			// tab += "<td>" + "<button class='btn'onclick=\"(getDetails('" + t + " '))\"><i class='fa fa-arrow-right' style='font-size:20px'></i></button>" + "</td>";
-			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "'))\"> > </button>" + "</td>";
+			// tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "'))\"> > </button>" + "</td>";
+			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "','fromTable'))\"> > </button>" + "</td>";
 			tab += "</tr>";
 		}
 
@@ -337,10 +331,13 @@ function toggleResFav(to) {
 		document.getElementById('resArea').style.display = "block";
 		document.getElementById('favoritesBtn').classList.remove("btn-primary");
 		document.getElementById('resultsBtn').classList.add("btn-primary");
+		document.getElementById('tableArea').style.display = "block";
 	}
 	else {
 		document.getElementById('favoritesArea').style.display = "block";
 		document.getElementById('resArea').style.display = "none";
+		document.getElementById('tableArea').style.display = "none";
+		//document.getElementById('totalDetails').style.display = "none";
 		document.getElementById('favoritesBtn').classList.add("btn-primary");
 		document.getElementById('resultsBtn').classList.remove("btn-primary");
 	}
@@ -382,6 +379,7 @@ function updateFavPage() {
 			a = a.replaceAll("fa fa-star","fa fa-trash");
 			a = a.replaceAll(starID,nID);
 			a = a.replaceAll('active-star','');
+			a = a.replaceAll('fromTable','fromFavorites');
 			html += a;
 		}
 

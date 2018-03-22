@@ -20,6 +20,7 @@ function updateTotalDetails() {
 		var cnt = parseInt(i)+1;
 		var a = str.split('<td scope="row">')[0] + '<td scope="row">' + cnt + str.split('<td scope="row">')[1].substr(1);
 		a = a.replaceAll(starID,nID);
+		a = a.replaceAll('fromTable','fromDetails')
 		html += a;
 	}
 
@@ -31,7 +32,7 @@ function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
 }
 
-function getDetails(pid,rowID) {
+function getDetails(pid,rowID,entryPoint) {
 	detailsClickedAtLeastOnce = true;
 	detailsHtml.push(rowID);
 	detailsHtml = detailsHtml.filter(onlyUnique);
@@ -57,8 +58,9 @@ function getDetails(pid,rowID) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
       	document.getElementById('resArea').style.display = "none";
       	document.getElementById('totalDetails').style.display = "none";
+      	document.getElementById('favoritesArea').style.display = "none";
       	console.log(place);
-      	var b = getNav(place,rowID);
+      	var b = getNav(place,rowID,entryPoint);
       	str += b;
       	document.getElementById('placeDetails').innerHTML = str;
       	document.getElementById('placeDetails').style.display = "block";
@@ -73,14 +75,37 @@ function updatePrevClick(rowID) {
 	prevClick = rowID;
 }
 
-function goBackToTable(rowID) {
-	document.getElementById('placeDetails').style.display = "none";
-	document.getElementById('totalDetails').style.display = "none;"
-	document.getElementById('resArea').style.display = "block";
-	document.getElementById('tableArea').style.display = "block";
-	rowID = rowID.replace(/\s/g,'');
-	console.log('goBackToTable rowID = ', rowID);
-	document.getElementById(rowID).classList.add('table-warning');
+function goBackToTable(rowID,entryPoint) {
+	if (entryPoint === "fromTable") {
+		console.log("fromTable");
+		document.getElementById('placeDetails').style.display = "none";
+		document.getElementById('totalDetails').style.display = "none;"
+		document.getElementById('resArea').style.display = "block";
+		document.getElementById('tableArea').style.display = "block";
+		document.getElementById('favoritesArea').style.display = "none";
+		rowID = rowID.replace(/\s/g,'');
+		document.getElementById(rowID).classList.add('table-warning');
+	}
+	else if(entryPoint === "fromFavorites") {
+		console.log("fromFavorites");
+		document.getElementById('placeDetails').style.display = "none";
+		document.getElementById('totalDetails').style.display = "none;"
+		document.getElementById('resArea').style.display = "none";
+		document.getElementById('tableArea').style.display = "none";
+		document.getElementById('favoritesArea').style.display = "block";
+		rowID = rowID.replace(/\s/g,'');
+		document.getElementById(rowID).classList.add('table-warning');
+	}
+	else if(entryPoint === "fromDetails") {
+		console.log("fromDetails");
+		document.getElementById('placeDetails').style.display = "none";
+		document.getElementById('totalDetails').style.display = "block";
+		document.getElementById('resArea').style.display = "block";
+		document.getElementById('tableArea').style.display = "none";
+		document.getElementById('favoritesArea').style.display = "none";
+		rowID = rowID.replace(/\s/g,'');
+		document.getElementById(rowID).classList.add('table-warning');
+	}
 }
 
 function fav(rowID) {
@@ -93,10 +118,11 @@ function fav(rowID) {
 	}
 }
 
-function getNav(place,rowID) {
+function getNav(place,rowID,entryPoint) {
 	var str = "<h1>" + place.name + "</h1>";
 	str += "<nav class='navbar navbar-light wrapper-nav navbar-expand-md bg-faded justify-content-center'>";
-	str += "<button class='btn d-flex w-50 mr-auto' onclick=\"(goBackToTable('" + rowID + " '))\">";
+	// str += "<button class='btn d-flex w-50 mr-auto' onclick=\"(goBackToTable('" + rowID + " '))\">";
+	str += "<button class='btn d-flex w-50 mr-auto' onclick=\"(goBackToTable('" + rowID + "','" + entryPoint +"'))\">";
 	str += "<i class='fa fa-left-arrow' style='font-size:20px'></i>List</button><div> <ul class='nav navbar-nav ml-auto w-100 justify-content-end'> <li class='nav-item'>"
 	if (favoriteList.indexOf(rowID) > -1) {
 		str += "<a class='nav-link' href='#'><i id='nav-star' class='fa fa-star active-star' onclick=\"(fav('" + rowID + "'))\"></i></a> </li> <li class='nav-item'> <a class='nav-link' href='#'>Twitter</a> </li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
