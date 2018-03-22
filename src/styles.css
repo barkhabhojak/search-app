@@ -131,6 +131,10 @@ div.col-md-3.col-12 {
 	padding: 15px;
 }
 
+div.dropdown {
+	margin: 10px;
+}
+
 a.dailyHoursLink{
 	text-decoration: underline !important;
 	color: #007bff !important;
@@ -176,6 +180,46 @@ a.dailyHoursLink{
         color: #ECBE24;
     }
 }
+
+.card-review {
+	margin: 10px 0 10px 0;
+    border: solid 1px #e9e9e9;
+    border-radius: 2%;
+    padding: 10px;
+}
+
+img.profile-pic {
+	height: 50px;
+	width: 50px;
+	border-radius: 50%;
+}
+
+.profile-pic-div {
+	margin-right: 10px;
+}
+
+a.review-name {
+	letter-spacing: 0.6px;
+	font-size: 15px;
+}
+
+.time-review {
+	padding-left: 3px;
+	font-size: 13px;
+	color: #bdbdbd;
+	margin: 0;
+}
+
+.rating-star-review {
+	font-size: 16px;
+	color: #fdd444;
+}
+
+p.reviews-text {
+	font-size: 14px;
+	letter-spacing: 0.2px;
+}
+
 
 @media only screen and (max-width: 700px) {
 	form {

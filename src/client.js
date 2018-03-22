@@ -272,7 +272,7 @@ function formTable(obj,ind) {
 	}
 
 	else if (obj.results.length === 0 || obj.status === 'ZERO_RESULTS') {
-		document.getElementById('resArea').innerHTML = "<div class='alert alert-warning wrapper-div'>No results found.</div>";
+		document.getElementById('resArea').innerHTML = "<div class='alert alert-warning wrapper-div'>No records.</div>";
 	}
 
 	else if (obj.status !== "OK") {
@@ -392,7 +392,7 @@ function updateFavPage() {
 	}
 
 	else {
-		var html = "<div class='alert alert-warning wrapper-div'>No favorites.</div>";
+		var html = "<div class='alert alert-warning wrapper-div'>No records.</div>";
 		document.getElementById('favoritesArea').innerHTML = html;
 	}
 }
