@@ -127,6 +127,11 @@ td a {
 	color: black;
 }
 
+a.dailyHoursLink{
+	text-decoration: underline !important;
+	color: #007bff !important;
+}
+
 .active-star {
 	color: #fdd444;
 }

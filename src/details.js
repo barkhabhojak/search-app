@@ -187,12 +187,12 @@ function getInfo(places) {
 			var day = moment().day();
 			var currDay = places.opening_hours.weekday_text[day];
 			currDay = currDay.split('y:')[1];
-			hours += currDay;
+			hours += currDay + "   ";
 		}
 		else {
-			hours += "<b>Closed</b>";
+			hours += "<b>Closed   </b>";
 		}
-    	hours += "<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#dailyHoursModal'>  Daily Open Hours</button>"
+    	hours += "<a class='dailyHoursLink' data-toggle='modal' data-target='#dailyHoursModal'>Daily Open Hours</a>"
 		//hours += "  <a data-toggle='modal' data-target='#dailyHoursModal'> Daily open hours</a>";
 		a = true;
 		str += "<tr><th>Hours</th><td>" + hours + "</td></tr>";
@@ -215,7 +215,7 @@ function getInfo(places) {
 			}
 		}
 
-		str += "</table></div><div class='modal-footer'><button type='button' class='btn btn-secondary' data dismiss='modal'>Close</button></div></div></div></div>";
+		str += "</table></div><div class='modal-footer'><button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button></div></div></div></div>";
 
 	}
 

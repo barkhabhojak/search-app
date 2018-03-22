@@ -196,7 +196,7 @@ function getUrl() {
 }
 
 function submitForm() {
-	document.getElementById('resArea').innerHTML = "<div class='progress'><div id='progress' class='progress-bar' role='progressbar' aria-valuemin='0' aria-valuemax='100'></div></div>";
+	document.getElementById('resArea').innerHTML = "<div class='progress'><div id='progress' class='progress-bar progress-bar-striped' role='progressbar' aria-valuemin='0' aria-valuemax='100'></div></div>";
 	progressBarSim();
 	saveValues();
 	var url = getUrl();
@@ -345,6 +345,7 @@ function toggleResFav(to) {
 		document.getElementById('resultsBtn').classList.remove("btn-primary");
 	}
 }
+
 function addRemoveFav(rowID) {
 	var index = favoriteList.indexOf(rowID);
 	var ind = rowID.split('_')[1];
