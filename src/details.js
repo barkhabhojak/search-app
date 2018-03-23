@@ -471,6 +471,7 @@ function getMap(place) {
 	html += "<input id='from-map' class='form-control' type='text' value='Your Location'></div><div class='map-div'><label style='padding:0;margin:0'>To</label>";
 	html += "<input id='to-map' disabled class='form-control' type='text' value='" + place.formatted_address + "'></div> <div class='map-div'><label style='padding:0;margin:0'>Travel Mode</label> <select id='method-map' class='form-control'> <option checked>Driving</option> <option>Bicycling</option> <option>Transit</option> <option>Walking</option> </select> </div> <input class='btn btn-primary' id='getDirBtn' value='Get Directions'></form> </div>";
 	html += "<div id='google-map'></div>";
+	html += "<div id='google-suggestions'></div>";
 	html += "<div id='google-path'></div>";
 	return html;
 }
@@ -573,10 +574,11 @@ function calculateAndDisplayRouteString(directionsService, directionsDisplay, wa
 	directionsService.route({
 		origin: or,
 		destination: {lat: targetLat, lng: targetLng},
-		travelMode: way
+		travelMode: way,
+		provideRouteAlternatives: true
 	},function(response, status) {
 		if (status == 'OK') {
-		directionsDisplay.setDirections(response);
+			directionsDisplay.setDirections(response);
 		} else {
 		window.alert('Directions request failed due to ' + status);
 		}
