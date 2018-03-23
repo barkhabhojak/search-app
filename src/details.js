@@ -132,7 +132,7 @@ function getNav(place,rowID,entryPoint) {
 	var str = "<h1>" + place.name + "</h1>";
 	str += "<nav class='navbar navbar-light wrapper-nav navbar-expand-md bg-faded justify-content-center'>";
 	// str += "<button class='btn d-flex w-50 mr-auto' onclick=\"(goBackToTable('" + rowID + " '))\">";
-	str += "<button class='btn d-flex w-50 mr-auto' onclick=\"(goBackToTable('" + rowID + "','" + entryPoint +"'))\">";
+	str += "<button class='btn mr-auto' onclick=\"(goBackToTable('" + rowID + "','" + entryPoint +"'))\">";
 	str += "<i class='fa fa-angle-left' style='font-size:20px;margin-right:4px'></i>List</button><div> <ul class='nav navbar-nav ml-auto w-100 justify-content-end'> <li class='nav-item'>"
 	if (place.website) {
 		var name = "" + place.name;

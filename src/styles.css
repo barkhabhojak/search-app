@@ -18,8 +18,34 @@ h1 {
 	margin-bottom: 5px;
 }
 
+ul.nav.navbar-nav {
+	flex-direction: row !important;
+}
+
+li.nav-item {
+	margin-right: 3px;
+	margin-left: 3px;
+}
+
+#yelp-reviews {
+	display: none;
+}
+
 #totalDetails {
 	display: none;
+	padding-bottom: 30px;
+}
+
+#placeDetails {
+	padding-bottom: 30px;
+}
+
+#favoritesArea {
+	padding-bottom: 30px;
+}
+
+#resArea {
+	padding-bottom: 30px;
 }
 
 .detailsBtnTab {
