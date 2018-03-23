@@ -469,8 +469,9 @@ function getMap(place) {
 	console.log("current long = ", currLong);
 	html += "<div> <form id='map-form' class='row'><div class='map-div'><label style='padding:0;margin:0'>From</label>";
 	html += "<input id='from-map' class='form-control' type='text' value='Your Location'></div><div class='map-div'><label style='padding:0;margin:0'>To</label>";
-	html += "<input id='to-map' disabled class='form-control' type='text' value='" + place.formatted_address + "'></div> <div class='map-div'><label style='padding:0;margin:0'>Travel Mode</label> <select id='method-map' class='form-control'> <option checked>Driving</option> <option>Bicycling</option> <option>Transit</option> <option>Walking</option> </select> </div> <button class='btn btn-primary' id='getDirBtn'>Get Directions</button> </form> </div>";
+	html += "<input id='to-map' disabled class='form-control' type='text' value='" + place.formatted_address + "'></div> <div class='map-div'><label style='padding:0;margin:0'>Travel Mode</label> <select id='method-map' class='form-control'> <option checked>Driving</option> <option>Bicycling</option> <option>Transit</option> <option>Walking</option> </select> </div> <input class='btn btn-primary' id='getDirBtn' value='Get Directions'></form> </div>";
 	html += "<div id='google-map'></div>";
+	html += "<div id='google-path'></div>";
 	return html;
 }
 
@@ -485,6 +486,7 @@ function clearMarkers() {
 }
 
 function formMap(targetLat,targetLng) {
+	initAutocomplete(2);
    	var check = document.getElementById("google-map").firstChild;
 	if (check === null) {
 	  	var directionsService = new google.maps.DirectionsService();
@@ -505,29 +507,78 @@ function formMap(targetLat,targetLng) {
         markers.push(marker);
 
 	    directionsDisplay.setMap(map);
+        directionsDisplay.setPanel(document.getElementById('google-path'));
+
+	    document.getElementById('getDirBtn').addEventListener('click', function() {
+	    	console.log("clicked = ", document.getElementById('method-map').value);
+	    	var str = document.getElementById('method-map').value;
+	    	var or = document.getElementById('from-map').value;
+	    	if (or === "") {
+
+	    	}
+	    	else {
+	    		clearMarkers();
+		    	if (or === "Your Location") {
+				    	if (str === "Walking") {
+				    		calculateAndDisplayRoute(directionsService, directionsDisplay,'WALKING',targetLat,targetLng,currLat,currLong);
+				    	}
+				    	else if (str === "Driving") {
+				    		calculateAndDisplayRoute(directionsService, directionsDisplay,'DRIVING',targetLat,targetLng,currLat,currLong);
+				    	}
+				    	else if (str === "Bicycling") {
+				    		calculateAndDisplayRoute(directionsService, directionsDisplay,'BICYCLING',targetLat,targetLng,currLat,currLong);
+				    	}
+				    	else if (str === "Transit") {
+				    		calculateAndDisplayRoute(directionsService, directionsDisplay,'TRANSIT',targetLat,targetLng,currLat,currLong);
+				    	}  		
+			    	}
+			    else {
+			    	if (str === "Walking") {
+			    		calculateAndDisplayRouteString(directionsService, directionsDisplay,'WALKING',targetLat,targetLng,or);
+			    	}
+			    	else if (str === "Driving") {
+			    		calculateAndDisplayRouteString(directionsService, directionsDisplay,'DRIVING',targetLat,targetLng,or);
+			    	}
+			    	else if (str === "Bicycling") {
+			    		calculateAndDisplayRouteString(directionsService, directionsDisplay,'BICYCLING',targetLat,targetLng,or);
+			    	}
+			    	else if (str === "Transit") {
+			    		calculateAndDisplayRouteString(directionsService, directionsDisplay,'TRANSIT',targetLat,targetLng,or);
+			    	}  		
+			    }
+	    	}
+	    	return false;
+	    });
+
 	}
-	    
-	 //    calculateAndDisplayRoute(directionsService, directionsDisplay,'WALKING',latitude,longitude);
+}
 
-  //       document.getElementById('walk').addEventListener('click', function() {
-  //       	document.getElementById('walk').classList.add("active");
-  //       	document.getElementById('bike').classList.remove("active");
-  //       	document.getElementById('drive').classList.remove("active");
-  //         calculateAndDisplayRoute(directionsService, directionsDisplay,'WALKING',latitude,longitude);
-  //       });
-  //       document.getElementById('bike').addEventListener('click', function() {
-  //       	document.getElementById('bike').classList.add("active");
-  //       	document.getElementById('walk').classList.remove("active");
-  //       	document.getElementById('drive').classList.remove("active");
+function calculateAndDisplayRoute(directionsService, directionsDisplay, way, targetLat,targetLng, orLat, orLng) {
+	var selectedMode = way;
+	directionsService.route({
+		origin: {lat: orLat, lng: orLng},
+		destination: {lat: targetLat, lng: targetLng},
+		travelMode: way
+	},function(response, status) {
+		if (status == 'OK') {
+		directionsDisplay.setDirections(response);
+		} else {
+		window.alert('Directions request failed due to ' + status);
+		}
+	});
+}
 
-  //         calculateAndDisplayRoute(directionsService, directionsDisplay,'BICYCLING',latitude,longitude);
-  //       });
-  //       document.getElementById('drive').addEventListener('click', function() {
-  //       	document.getElementById('drive').classList.add("active");
-  //       	document.getElementById('walk').classList.remove("active");
-  //       	document.getElementById('bike').classList.remove("active");
-
-  //         calculateAndDisplayRoute(directionsService, directionsDisplay,'DRIVING',latitude,longitude);
-  //       });
-		// }
+function calculateAndDisplayRouteString(directionsService, directionsDisplay, way, targetLat,targetLng, or) {
+	var selectedMode = way;
+	directionsService.route({
+		origin: or,
+		destination: {lat: targetLat, lng: targetLng},
+		travelMode: way
+	},function(response, status) {
+		if (status == 'OK') {
+		directionsDisplay.setDirections(response);
+		} else {
+		window.alert('Directions request failed due to ' + status);
+		}
+	});
 }

@@ -13,11 +13,19 @@ var prevClick = "";
 var markers = [];
 
 //Google autocomplete functions
-function initAutocomplete() {
-  autocomplete = new google.maps.places.Autocomplete(
-	(document.getElementById('loc')),
-      {types: ['geocode']});
-  autocomplete.addListener('place_changed', fillInAddress);
+function initAutocomplete(ind) {
+	if (ind === 1) {
+	  autocomplete = new google.maps.places.Autocomplete(
+		(document.getElementById('loc')),
+	      {types: ['geocode']});
+	  autocomplete.addListener('place_changed', fillInAddress);
+	}
+	else {
+	  autocomplete = new google.maps.places.Autocomplete(
+		(document.getElementById('from-map')),
+	      {types: ['geocode']});
+	  autocomplete.addListener('place_changed', fillInAddress);		
+	}
 }
 
 function fillInAddress() {
@@ -86,7 +94,7 @@ function getIpAddress() {
 	document.getElementById('currLocation').value = "curr-loc-" + ipJson.lat + "," + ipJson.lon;
 	//console.log("lat and long " + document.getElementById('other-loc').value);
 	getI = true;
-	initAutocomplete();
+	initAutocomplete(1);
   	updateFavPage();
 }
 
@@ -219,7 +227,9 @@ function submitForm() {
 	var responseObj = JSON.parse(ipr);
 	document.getElementById('placeDetails').style.display = "none";
 	document.getElementById('resArea').style.display = "block";
-	clearVar();
+	favoriteList = [];
+	markers = [];
+	detailsHtml = [];
 	var a = setTimeout(function() {formTable(responseObj,0);},5000);
 }
 
