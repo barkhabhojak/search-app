@@ -1,5 +1,4 @@
 var reviewsArrGoogle = [];
-var reviewsArrGoogleBack = [];
 
 function checkDetailsBtn() {
 	if (detailsClickedAtLeastOnce) {
@@ -151,8 +150,7 @@ function sortByKey(array, key, type) {
     });
 }
 
-function showReviewsList(arr) {
-	console.log("showReviewsList arr = ", arr);
+function showReviewsListGoogle(arr) {
 	var html = "";
 	for (var i = 0; i < arr.length; i++) {
 		html += "<div class='card-review row'>";
@@ -175,29 +173,55 @@ function showReviewsList(arr) {
 }
 
 function sortParam(type) {
+	var elem = document.getElementById('dropdownSortType');
+
 	if (type === 'most-recent') {
+		elem.innerHTML = "Most Recent";
 		var a = reviewsArrGoogle;
 		a = sortByKey(a,"time");
-		document.getElementById('google-reviews').innerHTML = showReviewsList(a.slice().reverse());
+		document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a.slice().reverse());
 	}
 	if (type === 'least-recent') {
+		elem.innerHTML = "Least Recent";
 		var a = reviewsArrGoogle;
 		a = sortByKey(a,"time");
-		document.getElementById('google-reviews').innerHTML = showReviewsList(a);
+		document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a);
 	}
 	if (type === 'most-rated') {
+		elem.innerHTML = "Highest Rating";
 		var a = reviewsArrGoogle;
 		a = sortByKey(a,"rating");
-		document.getElementById('google-reviews').innerHTML = showReviewsList(a.slice().reverse());
+		document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a.slice().reverse());
 	}
 	if (type === 'least-rated') {
+		elem.innerHTML = "Least Rating";
 		var a = reviewsArrGoogle;
 		a = sortByKey(a,"rating");
-		document.getElementById('google-reviews').innerHTML = showReviewsList(a);
+		document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a);
 	}
 	if (type === 'default') {
+		elem.innerHTML = "Default Order";
 		console.log("default");
-		document.getElementById('google-reviews').innerHTML = showReviewsList(reviewsArrGoogleBack);
+		document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(reviewsArrGoogle);
+	}
+}
+
+function toggleGY(check) {
+	if (check === 'google') {
+		document.getElementById('dropdownReviewsSource').innerHTML = "Google Reviews";
+		if(reviewsArrGoogle.length === 0) {
+			document.getElementById('dropdownSortType').disabled = true;
+			document.getElementById('dropdownSortType').classList.add('disabled');				
+		}
+		else {
+			document.getElementById('dropdownSortType').disabled = false;
+			document.getElementById('dropdownSortType').classList.remove('disabled');				
+		}
+		document.getElementById('google-reviews').style.display = "block";
+	}
+	if (check === 'yelp') {
+		document.getElementById('dropdownReviewsSource').innerHTML = "Yelp Reviews";
+		document.getElementById('google-reviews').style.display = "none";		
 	}
 }
 
@@ -205,14 +229,13 @@ function getReviews(place) {
 	var html = "";
 	console.log("reviews = ", place);
 	html += "<div class='row'>";
-	html += "<div class='dropdown show'> <a class='btn btn-secondary dropdown-toggle' href='#google-reviews' role='button' id='dropdownReviewsSource' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> Google Reviews </a> <div class='dropdown-menu' aria-labelledby='dropdownReviewsSource'> <a class='dropdown-item' href='#yelp-reviews'>Yelp Reviews</a> <a class='dropdown-item' href='#'>Another action</a> <a class='dropdown-item' href='#'>Something else here</a> </div> </div>";
-	html += "<div class='dropdown show'> <a class='btn btn-secondary dropdown-toggle' role='button' id='dropdownSortType' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onclick=\"(sortParam('default'))\"> Default Order </a> <div class='dropdown-menu' aria-labelledby='dropdownSortType'> <a class='dropdown-item' onclick=\"(sortParam('most-rated'))\">Highest Rating</a> <a class='dropdown-item' onclick=\"(sortParam('least-rated'))\">Lowest Rating</a> <a class='dropdown-item' onclick=\"(sortParam('most-recent'))\">Most Recent</a> <a class='dropdown-item' onclick=\"(sortParam('least-recent'))\">Least Recent</a></div></div>";
+	html += "<div class='dropdown show'><button class='btn btn-secondary dropdown-toggle' role='button' id='dropdownReviewsSource' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> Google Reviews </button> <div class='dropdown-menu' aria-labelledby='dropdownReviewsSource'> <a class='dropdown-item' onclick=\"(toggleGY('google'))\">Google Reviews</a> <a class='dropdown-item' onclick=\"(toggleGY('yelp'))\">Yelp Reviews</a></div></div>";
+	html += "<div class='dropdown show'><button class='btn btn-secondary dropdown-toggle' role='button' id='dropdownSortType' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> Default Order </button> <div class='dropdown-menu' aria-labelledby='dropdownSortType'><a class='dropdown-item' onclick=\"(sortParam('default'))\">Default Order</a> <a class='dropdown-item' onclick=\"(sortParam('most-rated'))\">Highest Rating</a> <a class='dropdown-item' onclick=\"(sortParam('least-rated'))\">Lowest Rating</a> <a class='dropdown-item' onclick=\"(sortParam('most-recent'))\">Most Recent</a> <a class='dropdown-item' onclick=\"(sortParam('least-recent'))\">Least Recent</a></div></div>";
 	html += "</div>";
 	if (place.reviews && place.reviews.length > 0) {
 		reviewsArrGoogle = place.reviews;
-		reviewsArrGoogleBack = place.reviews;
 		html += "<div id='google-reviews'>";
-		html += showReviewsList(reviewsArrGoogleBack);
+		html += showReviewsListGoogle(place.reviews);
 		html += "</div>"
 	}
 	else {
