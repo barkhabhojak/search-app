@@ -56,17 +56,26 @@ function getDetails(pid,rowID,entryPoint,lat,long) {
     service.getDetails({
       placeId: pid
     }, function(place, status) {
-      if (status === google.maps.places.PlacesServiceStatus.OK) {
-      	console.log("OK object");
-      	document.getElementById('resArea').style.display = "none";
-      	document.getElementById('totalDetails').style.display = "none";
-      	document.getElementById('favoritesArea').style.display = "none";
-      	var b = getNav(place,rowID,entryPoint);
-      	str += b;
-      	document.getElementById('placeDetails').innerHTML = str;
-      	formMap(lat,long);
-      	document.getElementById('placeDetails').style.display = "block";
-      }
+		if (status === google.maps.places.PlacesServiceStatus.OK) {
+			console.log("OK object");
+			document.getElementById('resArea').style.display = "none";
+			document.getElementById('totalDetails').style.display = "none";
+			document.getElementById('favoritesArea').style.display = "none";
+			var b = getNav(place,rowID,entryPoint);
+			str += b;
+			document.getElementById('placeDetails').innerHTML = str;
+			formMap(lat,long);
+			document.getElementById('placeDetails').style.display = "block";
+		}
+		else {
+			document.getElementById('resArea').style.display = "none";
+			document.getElementById('totalDetails').style.display = "none";
+			document.getElementById('favoritesArea').style.display = "none";
+			var b = "<div class='alert alert-warning'>Failed to get results.</div>"
+			str += b;
+			document.getElementById('placeDetails').innerHTML = str;
+			document.getElementById('placeDetails').style.display = "block";      	
+		}
     });
 }
 
@@ -125,11 +134,25 @@ function getNav(place,rowID,entryPoint) {
 	// str += "<button class='btn d-flex w-50 mr-auto' onclick=\"(goBackToTable('" + rowID + " '))\">";
 	str += "<button class='btn d-flex w-50 mr-auto' onclick=\"(goBackToTable('" + rowID + "','" + entryPoint +"'))\">";
 	str += "<i class='fa fa-angle-left' style='font-size:20px;margin-right:4px'></i>List</button><div> <ul class='nav navbar-nav ml-auto w-100 justify-content-end'> <li class='nav-item'>"
-	if (favoriteList.indexOf(rowID) > -1) {
-		str += "<a class='nav-link' href='#'><i id='nav-star' class='fa fav-active fa-star active-star' onclick=\"(fav('" + rowID + "'))\"></i></a> </li> <li class='nav-item'><a class='nav-link'><img src='http://cs-server.usc.edu:45678/hw/hw8/images/Twitter.png' class='twitter-img'></a> </li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
+	if (place.website) {
+		var name = "" + place.name;
+		name = name.replaceAll('\'','\\\'');
+		var add = "" + place.formatted_address;
+		add = add.replaceAll('\'','\\\'')
+		var ur = "" + place.website;
 	}
 	else {
-		str += "<a class='nav-link' href='#'><i id='nav-star' class='fa fa-star' onclick=\"(fav('" + rowID + "'))\"></i></a> </li> <li class='nav-item'><img src='http://cs-server.usc.edu:45678/hw/hw8/images/Twitter.png' class='twitter-img'></li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
+		var name = "" + place.name;
+		name = name.replaceAll('\'','\\\'');
+		var add = "" + place.formatted_address;
+		add = add.replaceAll('\'','\\\'')
+		var ur = "" + place.url;		
+	}
+	if (favoriteList.indexOf(rowID) > -1) {
+		str += "<a class='nav-link' href='#'><i id='nav-star' class='fa fav-active fa-star active-star' onclick=\"(fav('" + rowID + "'))\"></i></a> </li> <li class='nav-item'><img src='http://cs-server.usc.edu:45678/hw/hw8/images/Twitter.png' class='twitter-img' onclick=\"(twitterShow('" + name + "','" + add + "','" + ur + "'))\"></li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
+	}
+	else {
+		str += "<a class='nav-link' href='#'><i id='nav-star' class='fa fa-star' onclick=\"(fav('" + rowID + "'))\"></i></a> </li> <li class='nav-item'><img src='http://cs-server.usc.edu:45678/hw/hw8/images/Twitter.png' class='twitter-img' onclick=\"(twitterShow('" + name + "','" + add + "','" + ur + "'))\"></li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
 	}
 	str += "<div class='tab-content' id='nav-tabContent'><div class='tab-pane fade show active' id='nav-info' role='tabpanel' aria-labelledby='nav-info-tab'>";
 	var a = getInfo(place);
@@ -603,4 +626,15 @@ function calculateAndDisplayRouteString(directionsService, directionsDisplay, wa
 		window.alert('Directions request failed due to ' + status);
 		}
 	});
+}
+
+function twitterShow(name, address, url) {
+	console.log("twitter");
+	console.log("name = ", name);
+	console.log("address = ",address);
+	console.log("url = ", url);
+	var text = "Check out " + name + " located at " + address + ". Website: ";
+	text = text.replaceAll(' ','+');
+	var link = "https://twitter.com/intent/tweet?text="+text+"&url="+url;
+	var myWindow = window.open(link,"Twitter","height=420,width=550");
 }
