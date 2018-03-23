@@ -137,6 +137,7 @@ function getNav(place,rowID,entryPoint) {
 	str += b;
 	str += "</div><div class='tab-pane fade' id='nav-maps' role='tabpanel' aria-labelledby='nav-maps-tab'>";
 	var c = getMap(place);
+	str += c;
 	str += "</div> <div class='tab-pane fade' id='nav-reviews' role='tabpanel' aria-labelledby='nav-reviews-tab'>";
 	var d = getReviews(place);
 	str += d;
@@ -301,7 +302,7 @@ function getReviews(place) {
 		reviewsArrGoogle = place.reviews;
 		html += "<div id='google-reviews'>";
 		html += showReviewsListGoogle(place.reviews);
-		html += "</div></div>"
+		html += "</div>"
 	}
 	else {
 		html = "<div id='google-reviews' class='alert alert-warning'>No Google Reviews.</div>";
@@ -464,5 +465,8 @@ function getMap(place) {
 	var html = "";
 	console.log("current lat = ", currLat);
 	console.log("current long = ", currLong);
+	html += "<div> <form id='map-form' class='row'><div class='map-div'><label style='padding:0;margin:0'>From</label>";
+	html += "<input id='from-map' class='form-control' type='text' value='Your Location'></div><div class='map-div'><label style='padding:0;margin:0'>To</label>";
+	html += "<input id='to-map' disabled class='form-control' type='text' value='" + place.formatted_address + "'></div> <div class='map-div'><label style='padding:0;margin:0'>Travel Mode</label> <select id='method-map' class='form-control'> <option checked>Driving</option> <option>Bicycling</option> <option>Transit</option> <option>Walking</option> </select> </div> <button class='btn btn-primary' id='getDirBtn'>Get Directions</button> </form> </div>";
 	return html;
 }

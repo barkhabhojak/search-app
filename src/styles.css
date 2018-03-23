@@ -7,7 +7,7 @@
 	border-radius: 2%;
 }
 
-form {
+form#inputForm {
 	padding: 10px 100px 10px 100px;
 }
 
@@ -215,11 +215,34 @@ a.review-name {
 	color: #fdd444;
 }
 
+select {
+	height: 31px;
+}
+
 p.reviews-text {
 	font-size: 14px;
 	letter-spacing: 0.2px;
 }
 
+select#method-map.form-control {
+	height: 31px;
+}
+
+.map-div {
+	padding: 15px 15px 0 15px;
+	flex: 1;
+}
+
+form#map-form {
+	padding:10px;
+	align-items:stretch;
+	flex-direction:row;
+}
+
+#getDirBtn {
+	align-self: flex-end;
+	height: 31px;
+}
 
 @media only screen and (max-width: 700px) {
 	form {
@@ -238,5 +261,15 @@ p.reviews-text {
     }
     label {
 		padding-left: 0 !important;
+	}
+	.map-div {
+		width: 100%;
+	}
+	form#map-form {
+		flex-direction:column;
+	}
+	#getDirBtn {
+		margin: 15px 15px 0 15px;
+		align-self: auto;
 	}
 }
