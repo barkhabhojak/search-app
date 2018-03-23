@@ -249,6 +249,25 @@ form#map-form {
 	height: 350px;
 }
 
+#street-img {
+	height: 40px;
+	width: 40px;
+	margin: 10px;
+}
+
+.twitter-img {
+	height: 30px;
+	width: 30px;
+}
+
+#nav-star {
+	font-size: 20px;
+}
+
+.fav-active {
+	font-size: 30px !important;
+}
+
 @media only screen and (max-width: 700px) {
 	form {
 		padding: 20px 50px 20px 30px;

@@ -124,12 +124,12 @@ function getNav(place,rowID,entryPoint) {
 	str += "<nav class='navbar navbar-light wrapper-nav navbar-expand-md bg-faded justify-content-center'>";
 	// str += "<button class='btn d-flex w-50 mr-auto' onclick=\"(goBackToTable('" + rowID + " '))\">";
 	str += "<button class='btn d-flex w-50 mr-auto' onclick=\"(goBackToTable('" + rowID + "','" + entryPoint +"'))\">";
-	str += "<i class='fa fa-left-arrow' style='font-size:20px'></i>List</button><div> <ul class='nav navbar-nav ml-auto w-100 justify-content-end'> <li class='nav-item'>"
+	str += "<i class='fa fa-angle-left' style='font-size:20px;margin-right:4px'></i>List</button><div> <ul class='nav navbar-nav ml-auto w-100 justify-content-end'> <li class='nav-item'>"
 	if (favoriteList.indexOf(rowID) > -1) {
-		str += "<a class='nav-link' href='#'><i id='nav-star' class='fa fa-star active-star' onclick=\"(fav('" + rowID + "'))\"></i></a> </li> <li class='nav-item'> <a class='nav-link' href='#'>Twitter</a> </li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
+		str += "<a class='nav-link' href='#'><i id='nav-star' class='fa fav-active fa-star active-star' onclick=\"(fav('" + rowID + "'))\"></i></a> </li> <li class='nav-item'><a class='nav-link'><img src='http://cs-server.usc.edu:45678/hw/hw8/images/Twitter.png' class='twitter-img'></a> </li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
 	}
 	else {
-		str += "<a class='nav-link' href='#'><i id='nav-star' class='fa fa-star' onclick=\"(fav('" + rowID + "'))\"></i></a> </li> <li class='nav-item'> <a class='nav-link' href='#'>Twitter</a> </li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
+		str += "<a class='nav-link' href='#'><i id='nav-star' class='fa fa-star' onclick=\"(fav('" + rowID + "'))\"></i></a> </li> <li class='nav-item'><img src='http://cs-server.usc.edu:45678/hw/hw8/images/Twitter.png' class='twitter-img'></li> </ul> </div> </nav> <nav class='wrapper-nav'> <div class='nav nav-tabs justify-content-end' id='nav-tab' role='tablist'> <a class='nav-item nav-link active' id='nav-info-tab' data-toggle='tab' href='#nav-info' role='tab' aria-controls='nav-home' aria-selected='true'>Info</a> <a class='nav-item nav-link' id='nav-photos-tab' data-toggle='tab' href='#nav-photos' role='tab' aria-controls='nav-profile' aria-selected='false'>Photos</a> <a class='nav-item nav-link' id='nav-maps-tab' data-toggle='tab' href='#nav-maps' role='tab' aria-controls='nav-contact' aria-selected='false'>Maps</a> <a class='nav-item nav-link' id='nav-reviews-tab' data-toggle='tab' href='#nav-reviews' role='tab' aria-controls='nav-contact' aria-selected='false'>Reviews</a> </div>";
 	}
 	str += "<div class='tab-content' id='nav-tabContent'><div class='tab-pane fade show active' id='nav-info' role='tabpanel' aria-labelledby='nav-info-tab'>";
 	var a = getInfo(place);
@@ -470,6 +470,7 @@ function getMap(place) {
 	html += "<div> <form id='map-form' class='row'><div class='map-div'><label style='padding:0;margin:0'>From</label>";
 	html += "<input id='from-map' class='form-control' type='text' value='Your Location'></div><div class='map-div'><label style='padding:0;margin:0'>To</label>";
 	html += "<input id='to-map' disabled class='form-control' type='text' value='" + place.formatted_address + "'></div> <div class='map-div'><label style='padding:0;margin:0'>Travel Mode</label> <select id='method-map' class='form-control'> <option checked>Driving</option> <option>Bicycling</option> <option>Transit</option> <option>Walking</option> </select> </div> <input class='btn btn-primary' id='getDirBtn' value='Get Directions'></form> </div>";
+	html += "<div id='toggleStreetView'><img id='street-img' src='http://cs-server.usc.edu:45678/hw/hw8/images/Pegman.png'></div>"
 	html += "<div id='google-map'></div>";
 	html += "<div id='google-suggestions'></div>";
 	html += "<div id='google-path'></div>";
@@ -505,10 +506,28 @@ function formMap(targetLat,targetLng) {
           map: map
         });
 
+        panorama = map.getStreetView();
+        panorama.setPosition(uluru);
+        panorama.setPov(({
+	          heading: 265,
+	          pitch: 0
+	    }));
+
         markers.push(marker);
 
 	    directionsDisplay.setMap(map);
         directionsDisplay.setPanel(document.getElementById('google-path'));
+
+	    document.getElementById('toggleStreetView').addEventListener('click', function() {
+			var toggle = panorama.getVisible();
+			if (toggle == false) {
+				document.getElementById('street-img').setAttribute('src','http://cs-server.usc.edu:45678/hw/hw8/images/Map.png');
+				panorama.setVisible(true);
+			} else {
+				document.getElementById('street-img').setAttribute('src','http://cs-server.usc.edu:45678/hw/hw8/images/Pegman.png');
+				panorama.setVisible(false);
+			}
+		});
 
 	    document.getElementById('getDirBtn').addEventListener('click', function() {
 	    	console.log("clicked = ", document.getElementById('method-map').value);
