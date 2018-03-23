@@ -1,4 +1,5 @@
 var reviewsArrGoogle = [];
+var reviewsArrYelp = [];
 
 function checkDetailsBtn() {
 	if (detailsClickedAtLeastOnce) {
@@ -142,7 +143,7 @@ function getNav(place,rowID,entryPoint) {
 	return str;
 }
 
-function sortByKey(array, key, type) {
+function sortByKey(array, key) {
 	var narr = array.slice();
     return narr.sort(function(a, b) {
         var x = a[key]; var y = b[key];
@@ -174,36 +175,88 @@ function showReviewsListGoogle(arr) {
 
 function sortParam(type) {
 	var elem = document.getElementById('dropdownSortType');
+	var e = document.getElementById('dropdownReviewsSource').innerHTML;
+	if (e.replaceAll(' ','') === 'GoogleReviews') {
+		var a = reviewsArrGoogle;
+		if (type === 'most-recent') {
+			elem.innerHTML = "Most Recent";
+			a = sortByKey(a,"time");
+			document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a.slice().reverse());
+		}
+		if (type === 'least-recent') {
+			elem.innerHTML = "Least Recent";
+			a = sortByKey(a,"time");
+			document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a);
+		}
+		if (type === 'most-rated') {
+			elem.innerHTML = "Highest Rating";
+			a = sortByKey(a,"rating");
+			document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a.slice().reverse());
+		}
+		if (type === 'least-rated') {
+			elem.innerHTML = "Least Rating";
+			a = sortByKey(a,"rating");
+			document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a);
+		}
+		if (type === 'default') {
+			elem.innerHTML = "Default Order";
+			document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(reviewsArrGoogle);
+		}	
+	}
+	else {
+		console.log("yelp sort");
+		var a = reviewsArrYelp;
+		if (type === 'most-recent') {
+			elem.innerHTML = "Most Recent";
+			a = sortByKey(a,"time_created");
+			document.getElementById('yelp-reviews').innerHTML = showReviewsListYelp(a.slice().reverse());
+		}
+		if (type === 'least-recent') {
+			elem.innerHTML = "Least Recent";
+			a = sortByKey(a,"time_created");
+			document.getElementById('yelp-reviews').innerHTML = showReviewsListYelp(a);
+		}
+		if (type === 'most-rated') {
+			elem.innerHTML = "Highest Rating";
+			a = sortByKey(a,"rating");
+			document.getElementById('yelp-reviews').innerHTML = showReviewsListYelp(a.slice().reverse());
+		}
+		if (type === 'least-rated') {
+			elem.innerHTML = "Least Rating";
+			a = sortByKey(a,"rating");
+			document.getElementById('yelp-reviews').innerHTML = showReviewsListYelp(a);
+		}
+		if (type === 'default') {
+			elem.innerHTML = "Default Order";
+			document.getElementById('yelp-reviews').innerHTML = showReviewsListYelp(reviewsArrYelp);
+		}
+	}
 
-	if (type === 'most-recent') {
-		elem.innerHTML = "Most Recent";
-		var a = reviewsArrGoogle;
-		a = sortByKey(a,"time");
-		document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a.slice().reverse());
+}
+
+function showReviewsListYelp(arr) {
+	var html = "";
+	for (var i = 0; i < arr.length; i++) {
+		html += "<div class='card-review row'>";
+		if (arr[i].user.image_url) {
+			html += "<div class='profile-pic-div'><a href='" + arr[i].url + "' target='_blank'><img class='profile-pic' src='" + arr[i].user.image_url + "'></a></div>";
+		}
+		else {
+			html += "<div class='profile-pic-div'><a href='" + arr[i].url + "' target='_blank'></a></div>";			
+		}
+		html += "<div class='col'>";
+		html += "<div class='row'><a class='review-name' href='" + arr[i].url + "' target='_blank'>" + arr[i].user.name + "</a></div>";
+		html += "<div class='row'>"
+		for (var j = 0; j < parseInt(arr[i].rating); j++) {
+			html += "<i class='fa fa-star rating-star-review'></i>";
+		}
+		html += "<p class='time-review'>" + arr[i].time_created + "</p>";
+		html += "</div>";
+		html += "<div class='row'><p class='reviews-text'>" + arr[i].text + "</p></div>";
+		html += "</div>";
+		html += "</div>";
 	}
-	if (type === 'least-recent') {
-		elem.innerHTML = "Least Recent";
-		var a = reviewsArrGoogle;
-		a = sortByKey(a,"time");
-		document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a);
-	}
-	if (type === 'most-rated') {
-		elem.innerHTML = "Highest Rating";
-		var a = reviewsArrGoogle;
-		a = sortByKey(a,"rating");
-		document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a.slice().reverse());
-	}
-	if (type === 'least-rated') {
-		elem.innerHTML = "Least Rating";
-		var a = reviewsArrGoogle;
-		a = sortByKey(a,"rating");
-		document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(a);
-	}
-	if (type === 'default') {
-		elem.innerHTML = "Default Order";
-		console.log("default");
-		document.getElementById('google-reviews').innerHTML = showReviewsListGoogle(reviewsArrGoogle);
-	}
+	return html;
 }
 
 function toggleGY(check) {
@@ -218,10 +271,21 @@ function toggleGY(check) {
 			document.getElementById('dropdownSortType').classList.remove('disabled');				
 		}
 		document.getElementById('google-reviews').style.display = "block";
+		document.getElementById('yelp-reviews').style.display = "none";
+
 	}
 	if (check === 'yelp') {
 		document.getElementById('dropdownReviewsSource').innerHTML = "Yelp Reviews";
-		document.getElementById('google-reviews').style.display = "none";		
+		if(reviewsArrYelp.length === 0) {
+			document.getElementById('dropdownSortType').disabled = true;
+			document.getElementById('dropdownSortType').classList.add('disabled');				
+		}
+		else {
+			document.getElementById('dropdownSortType').disabled = false;
+			document.getElementById('dropdownSortType').classList.remove('disabled');				
+		}
+		document.getElementById('google-reviews').style.display = "none";
+		document.getElementById('yelp-reviews').style.display = "block";
 	}
 }
 
@@ -239,8 +303,55 @@ function getReviews(place) {
 		html += "</div>"
 	}
 	else {
-		html = "<div id='google-reviews' class='alert alert-warning wrapper-div'>No reviews.</div>";
+		html = "<div id='google-reviews' class='alert alert-warning wrapper-div'>No Google Reviews.</div>";
 	}
+
+	if (place.adr_address) {
+		var str = place.adr_address;
+		var temp = str.split(',');
+		var name = place.name;
+		var address, city, state, country, postalCode;
+		for (var i = 0; i < temp.length; i++) {
+			if (temp[i].indexOf('street-address') > -1) {
+				address = temp[i].split("street-address")[1].substr(2).split("</")[0];
+			}
+			if (temp[i].indexOf('locality') > -1) {
+				city = temp[i].split("locality")[1].substr(2).split("</")[0];
+			}
+			if (temp[i].indexOf('region') > -1) {
+				state = temp[i].split("region")[1].substr(2).split("</")[0];
+			}
+			if (temp[i].indexOf('country-name') > -1) {
+				country = temp[i].split("country-name")[1].substr(2).split("</")[0];
+			}
+			if (temp[i].indexOf('postal-code') > -1) {
+				postalCode = temp[i].split("postal-code")[1].substr(2).split("</")[0].split("-")[0];
+			}
+		}
+		var url = "/yelp?name=" + name + "&address=" + address + "&city=" + city + "&state=" + state + "&postalCode=" + postalCode + "&country=" + country;
+		url = url.replaceAll(' ','+');
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("GET",url,false);
+		xmlhttp.send();
+		var ipr = xmlhttp.responseText;
+		var responseObj = JSON.parse(ipr);
+		console.log("yelp response = ",responseObj.reviews);
+		if (responseObj.status || responseObj.reviews.length === 0) {
+			html += "<div id='yelp-reviews' class='alert alert-warning wrapper-div'>No Yelp Reviews.</div>";
+		}
+		else {
+			reviewsArrYelp = responseObj.reviews;
+			html += "<div id='yelp-reviews'>";
+			html += showReviewsListYelp(responseObj.reviews);
+			html += "</div>"
+		}
+	}
+
+	else {
+		html += "<div id='yelp-reviews' class='alert alert-danger wrapper-div'>Unable to get address from Google for Yelp API.</div>";
+	}
+
+
 	return html;
 }
 

@@ -5,11 +5,14 @@ const http = require('http');
 const app = express();
 const request = require('request');
 var router = express.Router();
+const yelp = require('yelp-fusion');
 
 var keyword_global, category_global, distance_global, loc_global, radioBtnChecked_global;
 
 const placesKey = "AIzaSyAU5hyg6Ky-pOHejxe2u8trKteehGkSNrk";
 const geoKey = "AIzaSyBi3mS77HSSIOTdlIgpnsjzdUVJIindH8w";
+const yelpKey = "HPOJ_wtKt3pM6NziniTmqO4ulVh2OWMZnii_NxW4NbvEMzZIe-FWcg6vTL53NmUJHMQ4KnjK4JQG0omkn0IymrRQKiQhoI69HkOEdwCx0L7v8QLW0UjTy-rSyEu0WnYx";
+const client = yelp.client(yelpKey);
 // Parsers
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
@@ -31,6 +34,38 @@ app.get('/ilike', function (req, res) {
 	console.log("lname = ", req.query.lname);
 	var responseObj = {message: 'OK'};
 	res.send(responseObj);
+})
+
+app.get('/yelp', (req, res) => {
+	console.log("yelp");
+	console.log(req.query);
+	client.businessMatch('lookup', {
+		name: req.query.name,
+		address: req.query.address,
+		city: req.query.city,
+		state: req.query.state.toUpperCase(),
+		country: "US",
+		postal_code: req.query.postalCode
+		}).then(response => {
+			console.log("yelp response");
+			if (response.jsonBody.businesses.length > 0) {
+				console.log(response.jsonBody.businesses);
+				console.log("matched id = ", response.jsonBody.businesses[0].id);
+				client.reviews(response.jsonBody.businesses[0].id).then(responseFin => {
+					res.send(responseFin.body);
+					}).catch(e => {
+						console.log(e);
+				});
+			}
+			else {
+				res.send({status:"No match found"});
+			}
+			// console.log("check check");
+			// console.log(response.jsonBody.businesses[0].id);
+
+		}).catch(e => {
+			console.log(e);
+		});
 })
 
 app.get('/result', (req, res) => {

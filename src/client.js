@@ -46,6 +46,7 @@ function clearBelow() {
 	placeSearch;
 	autocomplete;
 	nextPageToken = [];
+	reviewsArrYelp = [];
 	keyword, category, distance, loc, radioBtnChecked;
 	getI = false;
 	detailsClickedAtLeastOnce = false;
@@ -208,6 +209,9 @@ function submitForm() {
 	var responseObj = JSON.parse(ipr);
 	document.getElementById('placeDetails').style.display = "none";
 	document.getElementById('resArea').style.display = "block";
+	favoriteList = [];
+	reviewsArrGoogle = [];
+	reviewsArrYelp = [];
 	var a = setTimeout(function() {formTable(responseObj,0);},5000);
 }
 
