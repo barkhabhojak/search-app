@@ -10,6 +10,7 @@ var toggle = true;
 var detailsHtml = [];
 var favoriteList = [];
 var prevClick = "";
+var markers = [];
 
 //Google autocomplete functions
 function initAutocomplete() {
@@ -39,15 +40,19 @@ function geolocate() {
   autocomplete.setBounds(circle.getBounds());
 }
 
-// Form related functions and validation
-function clearBelow() {
+function clearVar() {
 	currLat = 0;
 	currLong = 0;
 	placeSearch;
 	autocomplete;
 	nextPageToken = [];
 	reviewsArrYelp = [];
-	keyword, category, distance, loc, radioBtnChecked;
+	markers = [];
+	keyword = "";
+	category = "";
+	distance = "";
+	loc = "";
+	radioBtnChecked = "";
 	getI = false;
 	detailsClickedAtLeastOnce = false;
 	toggle = true;
@@ -55,6 +60,11 @@ function clearBelow() {
 	favorites = [];
 	prevClick = "";
 	reviewsArrGoogle = [];
+}
+
+// Form related functions and validation
+function clearBelow() {
+	clearVar();
 	document.getElementById('resArea').innerHTML = "";
 	document.getElementById('placeDetails').innerHTML = "";
 }
@@ -209,9 +219,7 @@ function submitForm() {
 	var responseObj = JSON.parse(ipr);
 	document.getElementById('placeDetails').style.display = "none";
 	document.getElementById('resArea').style.display = "block";
-	favoriteList = [];
-	reviewsArrGoogle = [];
-	reviewsArrYelp = [];
+	clearVar();
 	var a = setTimeout(function() {formTable(responseObj,0);},5000);
 }
 
@@ -250,7 +258,7 @@ function formTable(obj,ind) {
 			var t = "" + obj.results[i].place_id;
 			tab += "<td>" + "<button class='btn' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa fa-star' id='" + btnID + "' style='font-size:20px'></i></button>" + "</td>";
 			// tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "'))\"> > </button>" + "</td>";
-			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "','fromTable'))\"> > </button>" + "</td>";
+			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "','fromTable',"+ obj.results[i].geometry.location.lat + "," + obj.results[i].geometry.location.lng +"))\"> > </button>" + "</td>";
 			tab += "</tr>";
 		}
 

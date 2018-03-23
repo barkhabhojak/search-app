@@ -35,7 +35,8 @@ function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
 }
 
-function getDetails(pid,rowID,entryPoint) {
+function getDetails(pid,rowID,entryPoint,lat,long) {
+	console.log("check location = " + lat  + "  " + long);
 	detailsClickedAtLeastOnce = true;
 	detailsHtml.push(rowID);
 	detailsHtml = detailsHtml.filter(onlyUnique);
@@ -63,6 +64,7 @@ function getDetails(pid,rowID,entryPoint) {
       	var b = getNav(place,rowID,entryPoint);
       	str += b;
       	document.getElementById('placeDetails').innerHTML = str;
+      	formMap(lat,long);
       	document.getElementById('placeDetails').style.display = "block";
       }
     });
@@ -468,5 +470,64 @@ function getMap(place) {
 	html += "<div> <form id='map-form' class='row'><div class='map-div'><label style='padding:0;margin:0'>From</label>";
 	html += "<input id='from-map' class='form-control' type='text' value='Your Location'></div><div class='map-div'><label style='padding:0;margin:0'>To</label>";
 	html += "<input id='to-map' disabled class='form-control' type='text' value='" + place.formatted_address + "'></div> <div class='map-div'><label style='padding:0;margin:0'>Travel Mode</label> <select id='method-map' class='form-control'> <option checked>Driving</option> <option>Bicycling</option> <option>Transit</option> <option>Walking</option> </select> </div> <button class='btn btn-primary' id='getDirBtn'>Get Directions</button> </form> </div>";
+	html += "<div id='google-map'></div>";
 	return html;
+}
+
+function setMapOnAll(map) {
+	for (var i = 0; i < markers.length; i++) {
+	  markers[i].setMap(map);
+	}
+}
+
+function clearMarkers() {
+	setMapOnAll(null);
+}
+
+function formMap(targetLat,targetLng) {
+   	var check = document.getElementById("google-map").firstChild;
+	if (check === null) {
+	  	var directionsService = new google.maps.DirectionsService();
+	  	var directionsDisplay = new google.maps.DirectionsRenderer();
+
+	    var uluru = {lat: targetLat, lng: targetLng};
+
+	    var map = new google.maps.Map(document.getElementById("google-map"), {
+	      zoom: 14,
+	      center: uluru
+	    });
+
+	    var marker = new google.maps.Marker({
+          position: uluru,
+          map: map
+        });
+
+        markers.push(marker);
+
+	    directionsDisplay.setMap(map);
+	}
+	    
+	 //    calculateAndDisplayRoute(directionsService, directionsDisplay,'WALKING',latitude,longitude);
+
+  //       document.getElementById('walk').addEventListener('click', function() {
+  //       	document.getElementById('walk').classList.add("active");
+  //       	document.getElementById('bike').classList.remove("active");
+  //       	document.getElementById('drive').classList.remove("active");
+  //         calculateAndDisplayRoute(directionsService, directionsDisplay,'WALKING',latitude,longitude);
+  //       });
+  //       document.getElementById('bike').addEventListener('click', function() {
+  //       	document.getElementById('bike').classList.add("active");
+  //       	document.getElementById('walk').classList.remove("active");
+  //       	document.getElementById('drive').classList.remove("active");
+
+  //         calculateAndDisplayRoute(directionsService, directionsDisplay,'BICYCLING',latitude,longitude);
+  //       });
+  //       document.getElementById('drive').addEventListener('click', function() {
+  //       	document.getElementById('drive').classList.add("active");
+  //       	document.getElementById('walk').classList.remove("active");
+  //       	document.getElementById('bike').classList.remove("active");
+
+  //         calculateAndDisplayRoute(directionsService, directionsDisplay,'DRIVING',latitude,longitude);
+  //       });
+		// }
 }

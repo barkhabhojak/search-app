@@ -244,6 +244,11 @@ form#map-form {
 	height: 31px;
 }
 
+#google-map {
+	width: 100%;
+	height: 350px;
+}
+
 @media only screen and (max-width: 700px) {
 	form {
 		padding: 20px 50px 20px 30px;
