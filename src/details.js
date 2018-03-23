@@ -559,7 +559,8 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, way, tar
 	directionsService.route({
 		origin: {lat: orLat, lng: orLng},
 		destination: {lat: targetLat, lng: targetLng},
-		travelMode: way
+		travelMode: way,
+		provideRouteAlternatives: true
 	},function(response, status) {
 		if (status == 'OK') {
 		directionsDisplay.setDirections(response);
