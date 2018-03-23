@@ -136,6 +136,7 @@ function getNav(place,rowID,entryPoint) {
 	var b = getPhotos(place);
 	str += b;
 	str += "</div><div class='tab-pane fade' id='nav-maps' role='tabpanel' aria-labelledby='nav-maps-tab'>";
+	var c = getMap(place);
 	str += "</div> <div class='tab-pane fade' id='nav-reviews' role='tabpanel' aria-labelledby='nav-reviews-tab'>";
 	var d = getReviews(place);
 	str += d;
@@ -300,10 +301,10 @@ function getReviews(place) {
 		reviewsArrGoogle = place.reviews;
 		html += "<div id='google-reviews'>";
 		html += showReviewsListGoogle(place.reviews);
-		html += "</div>"
+		html += "</div></div>"
 	}
 	else {
-		html = "<div id='google-reviews' class='alert alert-warning wrapper-div'>No Google Reviews.</div>";
+		html = "<div id='google-reviews' class='alert alert-warning'>No Google Reviews.</div>";
 	}
 
 	if (place.adr_address) {
@@ -337,7 +338,7 @@ function getReviews(place) {
 		var responseObj = JSON.parse(ipr);
 		console.log("yelp response = ",responseObj.reviews);
 		if (responseObj.status || responseObj.reviews.length === 0) {
-			html += "<div id='yelp-reviews' class='alert alert-warning wrapper-div'>No Yelp Reviews.</div>";
+			html += "<div id='yelp-reviews' class='alert alert-warning'>No Yelp Reviews.</div>";
 		}
 		else {
 			reviewsArrYelp = responseObj.reviews;
@@ -457,4 +458,11 @@ function getInfo(places) {
 	}
 
 	return str;
+}
+
+function getMap(place) {
+	var html = "";
+	console.log("current lat = ", currLat);
+	console.log("current long = ", currLong);
+	return html;
 }
