@@ -79,7 +79,7 @@ function clearBelow() {
 
 function getIpAddress() {
 	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.open("POST","http://ip-api.com/json",false);
+	xmlhttp.open("GET","/ip",false);
 	xmlhttp.send();
 	var ipr = xmlhttp.responseText;
 	var ipJson = JSON.parse(ipr);
@@ -93,7 +93,6 @@ function getIpAddress() {
 	currLat = ipJson.lat;
 	currLong = ipJson.lon;
 	document.getElementById('currLocation').value = "curr-loc-" + ipJson.lat + "," + ipJson.lon;
-	//console.log("lat and long " + document.getElementById('other-loc').value);
 	getI = true;
 	initAutocomplete(1);
   	updateFavPage();

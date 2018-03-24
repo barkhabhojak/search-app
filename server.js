@@ -74,6 +74,17 @@ app.get('/yelp', (req, res) => {
 		});
 })
 
+app.get('/ip', (req, res) => {
+	var url = "http://ip-api.com/json";
+	request.get(url,function(error, response, body) {
+			if (error === null) {
+				var ob = JSON.parse(body);
+				if(debug) {console.log(ob);}
+				res.send(ob);
+			}
+	});
+})
+
 app.get('/result', (req, res) => {
     //console.log(req.body);
     //console.log(req);
