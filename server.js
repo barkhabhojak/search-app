@@ -75,7 +75,7 @@ app.get('/yelp', (req, res) => {
 })
 
 app.get('/ip', (req, res) => {
-	var url = "http://ip-api.com/json";
+	var url = "https://ipapi.co/json";
 	request.get(url,function(error, response, body) {
 			if (error === null) {
 				var ob = JSON.parse(body);
