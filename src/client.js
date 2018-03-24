@@ -90,8 +90,8 @@ function getIpAddress() {
 		if (debug)
 			console.log("Found current IP");
 	}
-	currLat = ipJson.lat;
-	currLong = ipJson.lon;
+	currLat = ipJson.latitude;
+	currLong = ipJson.longitude;
 	document.getElementById('currLocation').value = "curr-loc-" + ipJson.lat + "," + ipJson.lon;
 	getI = true;
 	initAutocomplete(1);

@@ -6,7 +6,7 @@ const app = express();
 const request = require('request');
 var router = express.Router();
 const yelp = require('yelp-fusion');
-var debug = false;
+var debug = true;
 var keyword_global, category_global, distance_global, loc_global, radioBtnChecked_global;
 
 const placesKey = "AIzaSyAU5hyg6Ky-pOHejxe2u8trKteehGkSNrk";
