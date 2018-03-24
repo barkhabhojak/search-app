@@ -188,17 +188,15 @@ app.get('/result', (req, res) => {
 });
 
 
-//Set Port
-const port = process.env.PORT || '3000';
-app.set('port', port);
+// const port = process.env.PORT || '3000';
+// app.set('port', port);
 
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
-// server.listen(port, () => console.log(`Running on localhost:${port}`));
-server.listen(port, function(request,response) {
-	if (debug)
-		console.log('listen');
-});
+// server.listen(port, function(request,response) {
+// 	if (debug)
+// 		console.log('listen');
+// });
 
 
 
@@ -231,4 +229,5 @@ String.prototype.replaceAll = function(search, replacement) {
     return target.replace(new RegExp(search, 'g'), replacement);
 };
 
-module.exports = router;
+module.exports = app;
+//module.exports = router;
