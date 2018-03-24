@@ -27,6 +27,11 @@ li.nav-item {
 	margin-left: 3px;
 }
 
+.btn-outline-light-custom {
+	border: 1px solid #d3d3d3;
+	background-color: white;
+}
+
 #yelp-reviews {
 	display: none;
 }
@@ -168,6 +173,11 @@ a.dailyHoursLink{
 
 .active-star {
 	color: #fdd444;
+	font-size: 16px;
+}
+
+table.table {
+	line-height: 2.0;
 }
 
 .ratings {

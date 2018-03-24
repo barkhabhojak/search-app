@@ -6,7 +6,7 @@ const app = express();
 const request = require('request');
 var router = express.Router();
 const yelp = require('yelp-fusion');
-
+var debug = false;
 var keyword_global, category_global, distance_global, loc_global, radioBtnChecked_global;
 
 const placesKey = "AIzaSyAU5hyg6Ky-pOHejxe2u8trKteehGkSNrk";
@@ -29,16 +29,20 @@ app.get('/parameters', (req,res) => {
 })
 
 app.get('/ilike', function (req, res) {
-	console.log(req);
-	console.log("name = ",req.query.name);
-	console.log("lname = ", req.query.lname);
+	if (debug) {
+		console.log(req);
+		console.log("name = ",req.query.name);
+		console.log("lname = ", req.query.lname);
+	}
 	var responseObj = {message: 'OK'};
 	res.send(responseObj);
 })
 
 app.get('/yelp', (req, res) => {
-	console.log("yelp");
-	console.log(req.query);
+	if (debug) {
+		console.log("yelp");
+		console.log(req.query);		
+	}
 	client.businessMatch('lookup', {
 		name: req.query.name,
 		address: req.query.address,
@@ -47,24 +51,26 @@ app.get('/yelp', (req, res) => {
 		country: "US",
 		postal_code: req.query.postalCode
 		}).then(response => {
-			console.log("yelp response");
+			if (debug)
+				console.log("yelp response");
 			if (response.jsonBody.businesses.length > 0) {
-				console.log(response.jsonBody.businesses);
-				console.log("matched id = ", response.jsonBody.businesses[0].id);
+				if (debug) {
+					console.log(response.jsonBody.businesses);
+					console.log("matched id = ", response.jsonBody.businesses[0].id);
+				}
 				client.reviews(response.jsonBody.businesses[0].id).then(responseFin => {
 					res.send(responseFin.body);
 					}).catch(e => {
-						console.log(e);
+						if (debug)
+							console.log(e);
 				});
 			}
 			else {
 				res.send({status:"No match found"});
 			}
-			// console.log("check check");
-			// console.log(response.jsonBody.businesses[0].id);
-
 		}).catch(e => {
-			console.log(e);
+			if (debug)
+				console.log(e);
 		});
 })
 
@@ -76,7 +82,8 @@ app.get('/result', (req, res) => {
     // localhost:3000/result?keyw=pizza&category=Default&distance=&locOpt=other-loc&loc=North+Alameda+Street%2C+Los+Angeles%2C+CA%2C+USA
     // localhost:3000/result?next_page_token=CqQCHwEAADf3MDDr8WeJI3_4oj9m2t7f1FITaf_guEzSBmfzXl8X9G05XQwzY8QTxB_FOBqZVDhPh_4ytS9cHM0cZI34WcV4HRR7R6G7EtrQvcvJwJq-0xvq0RePWbU4j9RWdc-NG_-_Da2d_rRgypwIhpijN3emHe0q0a6zXenbKsjwZYrO_9GlJuXtRLFQ-Pda5FKLjouXyLFc2G36ShtCs4QcDkF6nJjaLjgDaJrk8vywfccQL4WXksg2RdYouINeqdp0rSKLCLbgxc9MBqtayeodeMJc6Hz8GMc2MtxycTmzz9Z7WA_3lqLxaXZN0My8Ktrkbv16vF3_Y_91TLGmCPucGvew_RnZY2H-GWIoAythCMCPOLFnDxkBnlGMjoYP22ky9RIQYrkQ317DDYAFDXtEL6bA6hoUHSw0L-qu7x8s3Fm3KCm4g1rJf_o&key=AIzaSyAU5hyg6Ky-pOHejxe2u8trKteehGkSNrk
     if (req.query.next_page_token !== undefined) {
-    	console.log('next page token');
+    	if (debug)
+    		console.log('next page token');
     	var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=" + req.query.next_page_token + "&key=" + placesKey;
 			request.get(url,function(error, response, body) {
 				if (error === null) {
@@ -87,10 +94,12 @@ app.get('/result', (req, res) => {
     }
 
     else {
-    	console.log(req.query.keyw);
-	    console.log(req.query.category);
-	    console.log(req.query.distance);
-	    console.log(req.query.locOpt);
+    	if (debug) {
+	    	console.log(req.query.keyw);
+		    console.log(req.query.category);
+		    console.log(req.query.distance);
+		    console.log(req.query.locOpt);
+		}
 	    var keyword = req.query.keyw;
 	    keyword_global = req.query.keyw;
 	    var category = req.query.category.toLowerCase();
@@ -117,7 +126,7 @@ app.get('/result', (req, res) => {
 				address = address.replaceAll(',','');
 			}
 			var url = "https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key="+geoKey;
-			console.log("url = ", url);
+			if (debug){console.log("url = ", url);};
 			request.get(url,function(error, response, body) {
 				if (error === null) {
 					var obj = JSON.parse(body);
@@ -128,7 +137,8 @@ app.get('/result', (req, res) => {
 
 						distance = distance*1609.34;
 						url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+","+long+"&radius="+distance+"&type="+category+"&keyword="+keyword+"&key="+placesKey;	
-						console.log("url list = ", url);
+						if (debug)
+							console.log("url list = ", url);
 						if (url.indexOf(' ') >= 0) {
 							url = url.replaceAll(' ','+');
 						}
@@ -158,7 +168,8 @@ app.get('/result', (req, res) => {
 	    	long = a.split(',')[1];
 			distance = distance*1609.34;
 			var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+","+long+"&radius="+distance+"&type="+category+"&keyword="+keyword+"&key="+placesKey;	
-			console.log("url list = ", url);
+			if (debug)
+				console.log("url list = ", url);
 			if (url.indexOf(' ') >= 0) {
 				url = url.replaceAll(' ','+');
 			}
@@ -185,7 +196,8 @@ const server = http.createServer(app);
 
 // server.listen(port, () => console.log(`Running on localhost:${port}`));
 server.listen(port, function(request,response) {
-	console.log('listen');
+	if (debug)
+		console.log('listen');
 });
 
 
@@ -193,7 +205,8 @@ server.listen(port, function(request,response) {
 function getList(keyword,category,distance,lat,long) {
 	distance = distance*1609.34;
 	var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+","+long+"&radius="+distance+"&type="+category+"&keyword="+keyword+"&key="+placesKey;	
-	console.log("url list = ", url);
+	if (debug)
+		console.log("url list = ", url);
 	if (url.indexOf(' ') >= 0) {
 		url = url.replaceAll(' ','+');
 	}

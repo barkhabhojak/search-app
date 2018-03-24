@@ -11,6 +11,9 @@ var detailsHtml = [];
 var favoriteList = [];
 var prevClick = "";
 var markers = [];
+var debug = false;
+var reviewsArrGoogle = [];
+var reviewsArrYelp = [];
 
 //Google autocomplete functions
 function initAutocomplete(ind) {
@@ -49,10 +52,6 @@ function geolocate() {
 }
 
 function clearVar() {
-	currLat = 0;
-	currLong = 0;
-	placeSearch;
-	autocomplete;
 	nextPageToken = [];
 	reviewsArrYelp = [];
 	markers = [];
@@ -61,7 +60,6 @@ function clearVar() {
 	distance = "";
 	loc = "";
 	radioBtnChecked = "";
-	getI = false;
 	detailsClickedAtLeastOnce = false;
 	toggle = true;
 	detailsHtml = [];
@@ -73,6 +71,8 @@ function clearVar() {
 // Form related functions and validation
 function clearBelow() {
 	clearVar();
+	//saveValues(2);
+	document.getElementById('search').disabled = true;
 	document.getElementById('resArea').innerHTML = "";
 	document.getElementById('placeDetails').innerHTML = "";
 }
@@ -87,7 +87,8 @@ function getIpAddress() {
 		alert('Cannot find current location. Please refresh the page.');
 	}
 	else if (ipJson.status === 'suceess') {
-		console.log("Found current IP");
+		if (debug)
+			console.log("Found current IP");
 	}
 	currLat = ipJson.lat;
 	currLong = ipJson.lon;
@@ -114,7 +115,9 @@ function changeColor(truth) {
 
 function enableSearch(i) {
 	var a = validateLoc();
+	if (debug) {console.log("validate location value = ", a);}
 	var b = validateKey();
+	if (debug) {console.log("validate key value = ", b);}
 	if (a && b && getI) {
 		document.getElementById('search').disabled = false;
 	}
@@ -124,7 +127,8 @@ function enableSearch(i) {
 }
 
 function validateLoc() {
-	console.log('validateLoc');
+	if (debug)
+		console.log('validateLoc');
 	var key = document.getElementById('inputForm').elements['locOpt'].value;
 	if (key === "other-loc") {
 		key = document.getElementById('inputForm').elements['loc'].value;
@@ -168,16 +172,25 @@ function validateKey() {
 	}			
 }
 
-function saveValues() {
-	keyword = document.getElementById('keyword').value;
-	category = document.getElementById('cat').value;
-	distance =  document.getElementById('dist').value
-	if (document.getElementById('currLocation').checked == true) {
-		radioBtnChecked = "currLocation";
+function saveValues(ind) {
+	if (ind === 1) {
+		keyword = document.getElementById('keyword').value;
+		category = document.getElementById('cat').value;
+		distance =  document.getElementById('dist').value
+		if (document.getElementById('currLocation').checked == true) {
+			radioBtnChecked = "currLocation";
+		}
+		else {
+			radioBtnChecked = "other-loc";
+			loc = document.getElementById('loc').value;
+		}
 	}
 	else {
-		radioBtnChecked = "other-loc";
-		loc = document.getElementById('loc').value;
+		document.getElementById('keyword').value = "";
+		document.getElementById('cat').value = "Default";
+		document.getElementById('dist').value = "";
+		document.getElementById('currLocation').checked = true;
+		document.getElementById('loc').value = "";
 	}
 }
 
@@ -218,7 +231,7 @@ function getUrl() {
 function submitForm() {
 	document.getElementById('resArea').innerHTML = "<div class='progress'><div id='progress' class='progress-bar progress-bar-striped' role='progressbar' aria-valuemin='0' aria-valuemax='100'></div></div>";
 	progressBarSim();
-	saveValues();
+	saveValues(1);
 	var url = getUrl();
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.open("GET",url,false);
@@ -230,6 +243,12 @@ function submitForm() {
 	favoriteList = [];
 	markers = [];
 	detailsHtml = [];
+	nextPageToken = [];
+	prevClick = "";
+	reviewsArrGoogle = [];
+	reviewsArrYelp = [];
+	detailsClickedAtLeastOnce = false;
+	toggle = true;
 	var a = setTimeout(function() {formTable(responseObj,0);},5000);
 }
 
@@ -252,10 +271,12 @@ function showTotalDetailsPage() {
 }
 
 function formTable(obj,ind) {
-	console.log("index = ", ind);
-	console.log("obj = ", obj);
+	if (debug) {
+		console.log("index = ", ind);
+		console.log("obj = ", obj);
+	}
 	if (obj.status === "OK" && obj.results.length > 0) {
-		var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button disabled class='btn btn-light disabled' id='totalDetailsBtn' onclick='showTotalDetailsPage()'>Details</button></div><div id='tableArea'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
+		var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button disabled class='btn btn-outline-light-custom disabled' id='totalDetailsBtn' onclick='showTotalDetailsPage()'>Details ></button></div><div id='tableArea'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
 
 		for (var i = 0; i < obj.results.length; i++) {
 			var cnt = i+1+ind*20;
@@ -266,26 +287,26 @@ function formTable(obj,ind) {
 			tab += "<td>" + obj.results[i].name + "</td>";
 			tab += "<td>" + obj.results[i].vicinity + "</td>";
 			var t = "" + obj.results[i].place_id;
-			tab += "<td>" + "<button class='btn' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa fa-star' id='" + btnID + "' style='font-size:20px'></i></button>" + "</td>";
+			tab += "<td>" + "<button class='btn btn-outline-light-custom' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa fa-star' id='" + btnID + "' style='font-size:16px'></i></button>" + "</td>";
 			// tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "'))\"> > </button>" + "</td>";
-			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "','fromTable',"+ obj.results[i].geometry.location.lat + "," + obj.results[i].geometry.location.lng +"))\"> > </button>" + "</td>";
+			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn btn-outline-light-custom' onclick=\"(getDetails('" + t + "','" + idT + "','fromTable',"+ obj.results[i].geometry.location.lat + "," + obj.results[i].geometry.location.lng +"))\"> > </button>" + "</td>";
 			tab += "</tr>";
 		}
 
 		if (obj.next_page_token !== undefined && ind === 0) {
 			nextPageToken[ind] = obj.next_page_token;
 			var temp = obj.next_page_token + "," + ind;
-			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div></div>"
+			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn btn-outline-dark' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div></div>"
 		}
 		else if (obj.next_page_token !== undefined && ind !== 0) {
 			nextPageToken[ind] = obj.next_page_token;
 			var temp = obj.next_page_token + "," + ind;
-			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "<button class='btn' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div></div>"
+			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn btn-outline-dark' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "<button class='btn' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div></div>"
 
 		}
 		else if (ind !== 0 && obj.next_page_token === undefined) {
 			var temp = obj.next_page_token + "," + ind;
-			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "</div></div></div>"
+			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn btn-outline-dark' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "</div></div></div>"
 		}
 		else {
 			tab += "</tbody></table></div></div>";
@@ -306,7 +327,8 @@ function formTable(obj,ind) {
 
 //pagination functions
 function getNextPage(str) {
-	console.log("next page");
+	if (debug)
+		console.log("next page");
 	var token = str.split(',')[0];
 	var ind = parseInt(str.split(',')[1]);
 	var url = "/result?next_page_token=" + token;
