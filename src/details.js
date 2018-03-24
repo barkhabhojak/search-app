@@ -575,7 +575,7 @@ function formMap(targetLat,targetLng) {
 	    	}
 	    	else {
 	    		clearMarkers();
-		    	if (or.replaceAll(' ','') === "YourLocation" || or.replaceAll(' ','') === "Mylocation") {
+		    	if (or.replaceAll(' ','').toLowerCase() === "yourlocation" || or.replaceAll(' ','').toLowerCase() === "mylocation") {
 				    	if (str === "Walking") {
 				    		calculateAndDisplayRoute(directionsService, directionsDisplay,'WALKING',targetLat,targetLng,currLat,currLong);
 				    	}
