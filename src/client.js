@@ -79,7 +79,8 @@ function clearBelow() {
 
 function getIpAddress() {
 	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.open("GET","/ip",false);
+	var url = "https://ipapi.co/json";
+	xmlhttp.open("GET",url,false);
 	xmlhttp.send();
 	var ipr = xmlhttp.responseText;
 	var ipJson = JSON.parse(ipr);
