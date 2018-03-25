@@ -209,6 +209,15 @@ app.get('/result', (req, res) => {
 // 		console.log('listen');
 // });
 
+if (module === require.main) {
+  // Start the server
+  	var server = app.listen(process.env.port || 8080, function () {
+    var port = server.address().port;
+
+    console.log('App listening on port %s', port);
+    console.log('Press Ctrl+C to quit.');
+  });
+}
 
 
 function getList(keyword,category,distance,lat,long) {
