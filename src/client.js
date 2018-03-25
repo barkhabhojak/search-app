@@ -93,7 +93,8 @@ function getIpAddress() {
 	}
 	currLat = ipJson.latitude;
 	currLong = ipJson.longitude;
-	document.getElementById('currLocation').value = "curr-loc-" + ipJson.lat + "," + ipJson.lon;
+	document.getElementById('currLocation').value = "curr-loc-" + ipJson.latitude + "," + ipJson.longitude;
+	if (debug) {console.log("check value = ", document.getElementById('currLocation').value)};
 	getI = true;
 	initAutocomplete(1);
   	updateFavPage();
@@ -229,8 +230,8 @@ function getUrl() {
 }
 
 function submitForm() {
-	document.getElementById('resArea').innerHTML = "<div class='progress'><div id='progress' class='progress-bar progress-bar-striped' role='progressbar' aria-valuemin='0' aria-valuemax='100'></div></div>";
-	progressBarSim();
+	document.getElementById('resArea').innerHTML = "<div class='progress'><div id='progress' class='progress-bar progress-bar-striped' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:50%'></div></div>";
+	//progressBarSim();
 	saveValues(1);
 	var url = getUrl();
 	var xmlhttp = new XMLHttpRequest();
@@ -315,7 +316,7 @@ function formTable(obj,ind) {
 		document.getElementById('resArea').innerHTML = tab;
 	}
 
-	else if (obj.results.length === 0 || obj.status === 'ZERO_RESULTS') {
+	else if (obj.status === 'ZERO_RESULTS') {
 		document.getElementById('resArea').innerHTML = "<div class='alert alert-warning wrapper-div'>No records.</div>";
 	}
 
