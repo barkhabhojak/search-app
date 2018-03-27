@@ -366,7 +366,9 @@ function getReviews(place) {
 				postalCode = temp[i].split("postal-code")[1].substr(2).split("</")[0].split("-")[0];
 			}
 		}
-		var url = "/yelp?name=" + name + "&address=" + address + "&city=" + city + "&state=" + state + "&postalCode=" + postalCode + "&country=" + country;
+		var latOfPlace = place.geometry.location.lat();
+		var lngOfPlace = place.geometry.location.lng();
+		var url = "/yelp?name=" + name + "&address=" + address + "&city=" + city + "&state=" + state + "&postalCode=" + postalCode + "&country=" + country + "&lat=" + latOfPlace + "&lng=" + lngOfPlace;
 		url = url.replaceAll(' ','+');
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.open("GET",url,false);

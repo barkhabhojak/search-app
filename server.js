@@ -6,7 +6,7 @@ const app = express();
 const request = require('request');
 var router = express.Router();
 const yelp = require('yelp-fusion');
-var debug = true;
+var debug = false;
 var keyword_global, category_global, distance_global, loc_global, radioBtnChecked_global;
 
 const placesKey = "AIzaSyAU5hyg6Ky-pOHejxe2u8trKteehGkSNrk";
@@ -49,7 +49,9 @@ app.get('/yelp', (req, res) => {
 		city: req.query.city,
 		state: req.query.state.toUpperCase(),
 		country: "US",
-		postal_code: req.query.postalCode
+		postal_code: req.query.postalCode,
+		latitude: req.query.lat,
+		longitude: req.query.lng
 		}).then(response => {
 			if (debug)
 				console.log("yelp response");
