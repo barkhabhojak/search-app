@@ -237,7 +237,7 @@ function getList(keyword,category,distance,lat,long) {
 				return obj;
 			}
 			else {
-				alert('error in getting location from google maps');
+				// alert('error in getting location from google maps');
 				return null;
 			}
 		}
