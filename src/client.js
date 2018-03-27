@@ -79,7 +79,7 @@ function clearBelow() {
 
 function getIpAddress() {
 	var xmlhttp = new XMLHttpRequest();
-	var url = "https://ipapi.co/json";
+	var url = "http://ip-api.com/json";
 	xmlhttp.open("GET",url,false);
 	xmlhttp.send();
 	var ipr = xmlhttp.responseText;
@@ -91,9 +91,9 @@ function getIpAddress() {
 		if (debug)
 			console.log("Found current IP");
 	}
-	currLat = ipJson.latitude;
-	currLong = ipJson.longitude;
-	document.getElementById('currLocation').value = "curr-loc-" + ipJson.latitude + "," + ipJson.longitude;
+	currLat = ipJson.lat;
+	currLong = ipJson.lon;
+	document.getElementById('currLocation').value = "curr-loc-" + ipJson.lat + "," + ipJson.lon;
 	if (debug) {console.log("check value = ", document.getElementById('currLocation').value)};
 	getI = true;
 	initAutocomplete(1);
