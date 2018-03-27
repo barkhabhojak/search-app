@@ -127,6 +127,21 @@ function enableSearch(i) {
 	}
 }
 
+function checkOther() {
+	var key = document.getElementById('inputForm').elements['loc'].value;
+	key = key.replace(/\s/g, '');
+	console.log(key);
+	key = key.replaceAll(',','');
+	key = key.replaceAll('\'','');
+	var test = /^\w+$/i.test(key);
+	if (!test) {
+		document.getElementById('search').disabled = true;
+	}
+	else {
+		document.getElementById('search').disabled = false;
+	}
+}
+
 function validateLoc() {
 	if (debug)
 		console.log('validateLoc');
@@ -377,14 +392,16 @@ function toggleResFav(to) {
 		document.getElementById('placeDetails').style.display = "none";
 		document.getElementById('totalDetails').style.display = "none";
 		document.getElementById('resArea').style.display = "block";
-		document.getElementById('tableArea').style.display = "block";
+		if (document.getElementById('tableArea'))
+			document.getElementById('tableArea').style.display = "block";
 		document.getElementById('favoritesBtn').classList.remove("btn-primary");
 		document.getElementById('resultsBtn').classList.add("btn-primary");
 	}
 	else {
 		document.getElementById('favoritesArea').style.display = "block";
 		document.getElementById('resArea').style.display = "none";
-		document.getElementById('tableArea').style.display = "none";
+		if (document.getElementById('tableArea'))
+			document.getElementById('tableArea').style.display = "none";
 		document.getElementById('totalDetails').style.display = "none";
 		document.getElementById('placeDetails').style.display = "none";
 		document.getElementById('favoritesBtn').classList.add("btn-primary");

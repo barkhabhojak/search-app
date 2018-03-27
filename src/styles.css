@@ -339,4 +339,11 @@ form#map-form {
 		margin: 15px 15px 0 15px;
 		align-self: auto;
 	}
+	.wrapper-nav {
+		width: 95%;
+	}
+	.modal {
+		width: 54%;
+		margin-left: 10px;
+	}
 }

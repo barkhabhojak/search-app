@@ -73,7 +73,7 @@
 					    	<label style="padding: 0; line-height: 0.5"><input type="radio" name="locOpt" id="currLocation" value="curr-loc" onclick="changeColor(false)" onchange="enableSearch(4)" checked> Current Location</label>
 					    </div>
 					    <div class="radio">
-					    	<label style="padding: 0; width: 100%"><input type="radio" name="locOpt" id="other-loc" value="other-loc" onclick="changeColor(true)"> Other. Please specify. <input style="margin-left: 20px" class="form-control" type="text" name="loc" id="loc" placeholder="Enter a location" onkeyup="enableSearch(3)" disabled>
+					    	<label style="padding: 0; width: 100%"><input type="radio" name="locOpt" id="other-loc" value="other-loc" onclick="changeColor(true);checkOther()"> Other. Please specify. <input style="margin-left: 20px" class="form-control" type="text" name="loc" id="loc" placeholder="Enter a location" onkeyup="enableSearch(3)" disabled>
 					    		<div style="margin-left: 20px" class="err" id="err-loc">Please enter a location.</div></label>
 					    </div>
 					</div>
