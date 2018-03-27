@@ -7,6 +7,11 @@
 	border-radius: 2%;
 }
 
+.btn-outline-dark:hover {
+	color: #343a40;
+	background-color: white;
+}
+
 form#inputForm {
 	padding: 10px 100px 10px 100px;
 }

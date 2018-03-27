@@ -328,7 +328,7 @@ function formTable(obj,ind) {
 		else if (obj.next_page_token !== undefined && ind !== 0) {
 			nextPageToken[ind] = obj.next_page_token;
 			var temp = obj.next_page_token + "," + ind;
-			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn btn-outline-dark' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "<button class='btn' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div></div>"
+			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn btn-outline-dark' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "<button class='btn btn-outline-dark' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div></div>"
 
 		}
 		else if (ind !== 0 && obj.next_page_token === undefined) {
