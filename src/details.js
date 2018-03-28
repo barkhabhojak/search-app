@@ -13,7 +13,13 @@ function updateTotalDetails() {
 	var html = "<div class='wrapper-div'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
 
 	for (var i = 0; i < detailsHtml.length; i++) {
-		document.getElementById(detailsHtml[i]).classList.remove('table-warning');
+		if(debug) {console.log("check detailsHtml = ", detailsHtml[i]);}
+		if (prevClick === detailsHtml[i]) {
+			document.getElementById(detailsHtml[i]).classList.add('table-warning');
+		}
+		else {
+			document.getElementById(detailsHtml[i]).classList.remove('table-warning');
+		}
 		var str = document.getElementById(detailsHtml[i]).outerHTML;
 		var starID = "star_" + detailsHtml[i].split('_')[1];
 		var nID = "details_" + starID;
@@ -38,13 +44,13 @@ function getDetails(pid,rowID,entryPoint,lat,long) {
 	detailsClickedAtLeastOnce = true;
 	detailsHtml.push(rowID);
 	detailsHtml = detailsHtml.filter(onlyUnique);
-	updateTotalDetails();
 	if (prevClick !== "") {
 		updatePrevClick(rowID);
 	}
 	else {
 		prevClick = rowID;
 	}
+	updateTotalDetails();
 	checkDetailsBtn();
 	var str = "";
 	pid = pid.replace(/\s/g,'');
@@ -82,6 +88,7 @@ function getDetails(pid,rowID,entryPoint,lat,long) {
 function updatePrevClick(rowID) {
 	document.getElementById(prevClick).classList.remove('table-warning');
 	prevClick = rowID;
+	if (debug) {console.log("prev click updated = ", prevClick);}
 }
 
 function goBackToTable(rowID,entryPoint) {

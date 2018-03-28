@@ -289,9 +289,9 @@ function showTotalDetailsPage() {
 		document.getElementById('tableArea').style.display = "none";
 	}
 	else {
-		for (var i = 0; i < detailsHtml.length; i++) {
-			document.getElementById(detailsHtml[i]).classList.remove('table-warning');
-		}
+		// for (var i = 0; i < detailsHtml.length; i++) {
+		// 	document.getElementById(detailsHtml[i]).classList.remove('table-warning');
+		// }
 		document.getElementById('totalDetails').style.display = "none";
 		document.getElementById('tableArea').style.display = "block";		
 	}
@@ -319,7 +319,7 @@ function formTable(obj,ind) {
 			var t = "" + obj.results[i].place_id;
 			tab += "<td>" + "<button class='btn btn-outline-light-custom' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa fa-star' id='" + btnID + "' style='font-size:16px'></i></button>" + "</td>";
 			// tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "'))\"> > </button>" + "</td>";
-			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn btn-outline-light-custom' onclick=\"(getDetails('" + t + "','" + idT + "','fromTable',"+ obj.results[i].geometry.location.lat + "," + obj.results[i].geometry.location.lng +"))\"> > </button>" + "</td>";
+			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn btn-outline-light-custom' onclick=\"(getDetails('" + t + "','" + idT + "','fromTable',"+ obj.results[i].geometry.location.lat + "," + obj.results[i].geometry.location.lng +"));updateFavPage()\"> > </button>" + "</td>";
 			tab += "</tr>";
 		}
 
@@ -455,6 +455,13 @@ function updateFavPage() {
 	if (favoriteList.length > 0) {
 		var html = "<div class='wrapper-div'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
 		for (var i = 0; i < favoriteList.length; i++) {
+			if(debug) {console.log("check favoriteList = ", favoriteList[i]);}
+			if (prevClick === favoriteList[i]) {
+				document.getElementById(favoriteList[i]).classList.add('table-warning');
+			}
+			else {
+				document.getElementById(favoriteList[i]).classList.remove('table-warning');
+			}
 			//document.getElementById(favoriteList[i]).classList.remove('table-warning');
 			var str = document.getElementById(favoriteList[i]).outerHTML;
 			var starID = "star_" + favoriteList[i].split('_')[1];
