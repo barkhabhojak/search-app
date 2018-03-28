@@ -276,7 +276,7 @@ function submitForm() {
 	reviewsArrYelp = [];
 	detailsClickedAtLeastOnce = false;
 	toggle = true;
-	var a = setTimeout(function() {formTable(responseObj,0);},5000);
+	var a = formTable(responseObj,0);
 }
 
 

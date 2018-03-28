@@ -8,7 +8,7 @@ var router = express.Router();
 const yelp = require('yelp-fusion');
 var debug = false;
 var keyword_global, category_global, distance_global, loc_global, radioBtnChecked_global;
-
+var local = false;
 const placesKey = "AIzaSyAU5hyg6Ky-pOHejxe2u8trKteehGkSNrk";
 const geoKey = "AIzaSyBi3mS77HSSIOTdlIgpnsjzdUVJIindH8w";
 const yelpKey = "HPOJ_wtKt3pM6NziniTmqO4ulVh2OWMZnii_NxW4NbvEMzZIe-FWcg6vTL53NmUJHMQ4KnjK4JQG0omkn0IymrRQKiQhoI69HkOEdwCx0L7v8QLW0UjTy-rSyEu0WnYx";
@@ -28,15 +28,15 @@ app.get('/parameters', (req,res) => {
 	res.send({'keyword' : keyword_global, 'category' : category_global, 'distance' : distance_global, 'location' : loc_global, 'radioChecked' : radioBtnChecked_global})
 })
 
-app.get('/ilike', function (req, res) {
-	if (debug) {
-		console.log(req);
-		console.log("name = ",req.query.name);
-		console.log("lname = ", req.query.lname);
-	}
-	var responseObj = {message: 'OK'};
-	res.send(responseObj);
-})
+// app.get('/ilike', function (req, res) {
+// 	if (debug) {
+// 		console.log(req);
+// 		console.log("name = ",req.query.name);
+// 		console.log("lname = ", req.query.lname);
+// 	}
+// 	var responseObj = {message: 'OK'};
+// 	res.send(responseObj);
+// })
 
 app.get('/yelp', (req, res) => {
 	if (debug) {
@@ -200,25 +200,28 @@ app.get('/result', (req, res) => {
 	}
 });
 
+if(local) {
+	const port = process.env.PORT || '3000';
+	app.set('port', port);
 
-// const port = process.env.PORT || '3000';
-// app.set('port', port);
+	const server = http.createServer(app);
 
-// const server = http.createServer(app);
+	server.listen(port, function(request,response) {
+		if (debug)
+			console.log('listen');
+	});
+}
+	
+else {
+	if (module === require.main) {
+	  // Start the server
+	  	var server = app.listen(process.env.port || 8081, function () {
+	    var port = server.address().port;
 
-// server.listen(port, function(request,response) {
-// 	if (debug)
-// 		console.log('listen');
-// });
-
-if (module === require.main) {
-  // Start the server
-  	var server = app.listen(process.env.port || 8081, function () {
-    var port = server.address().port;
-
-    console.log('App listening on port %s', port);
-    console.log('Press Ctrl+C to quit.');
-  });
+	    console.log('App listening on port %s', port);
+	    console.log('Press Ctrl+C to quit.');
+	  });
+	}
 }
 
 
