@@ -87,7 +87,7 @@ function clearBelow() {
 	document.getElementById('search').disabled = true;
 	document.getElementById('resArea').innerHTML = "";
 	document.getElementById('placeDetails').innerHTML = "";
-	document.getElementById('favoritesArea').innerHTML = "";
+	document.getElementById('favoritesArea').innerHTML =  "<div class='alert alert-warning wrapper-div'>No records.</div>";
 	document.getElementById('totalDetails').innerHTML = "";
 }
 
@@ -270,7 +270,6 @@ function submitForm() {
 	var responseObj = JSON.parse(ipr);
 	document.getElementById('placeDetails').style.display = "none";
 	document.getElementById('resArea').style.display = "block";
-	favoriteList = [];
 	markers = [];
 	detailsHtml = [];
 	nextPageToken = [];
@@ -310,9 +309,10 @@ function formTable(obj,ind) {
 
 		for (var i = 0; i < obj.results.length; i++) {
 			var cnt = i+1+ind*20;
-			var idT = "row_" + cnt;
-			var btnID = "star_" + cnt;
-			tab += "<tr id='row_" + cnt + "'><td scope='row'>"+ cnt +"</td>";
+			//var idT = "row_" + cnt;
+			var idT = "row_" + obj.results[i].place_id;
+			var btnID = "star_" + obj.results[i].place_id;
+			tab += "<tr id='row_" + obj.results[i].place_id + "'><td scope='row'>"+ cnt +"</td>";
 			tab += "<td>" + "<img src='" + obj.results[i].icon + "' style='height:25px;width:25px'>" + "</td>";
 			tab += "<td>" + obj.results[i].name + "</td>";
 			tab += "<td>" + obj.results[i].vicinity + "</td>";
@@ -455,7 +455,7 @@ function updateFavPage() {
 	if (favoriteList.length > 0) {
 		var html = "<div class='wrapper-div'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
 		for (var i = 0; i < favoriteList.length; i++) {
-			document.getElementById(favoriteList[i]).classList.remove('table-warning');
+			//document.getElementById(favoriteList[i]).classList.remove('table-warning');
 			var str = document.getElementById(favoriteList[i]).outerHTML;
 			var starID = "star_" + favoriteList[i].split('_')[1];
 			var nID = "fav_" + starID;
