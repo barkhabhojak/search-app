@@ -80,7 +80,6 @@ function getDetails(pid,rowID,entryPoint,lat,long) {
 }
 
 function updatePrevClick(rowID) {
-	console.log('updatePrevClick');
 	document.getElementById(prevClick).classList.remove('table-warning');
 	prevClick = rowID;
 }
@@ -341,7 +340,7 @@ function getReviews(place) {
 		html += "</div>"
 	}
 	else {
-		html = "<div id='google-reviews' class='alert alert-warning'>No Google Reviews.</div>";
+		html += "<div id='google-reviews' class='alert alert-warning'>No Google Reviews.</div>";
 	}
 
 	if (place.adr_address) {
@@ -409,7 +408,7 @@ function getPhotos(place) {
 		html += "</div></div>";
 	}
 	else {
-		html = "<div class='alert alert-warning wrapper-div'>No place.photos.</div>";
+		html = "<div class='alert alert-warning wrapper-div'>No records.</div>";
 	}
 	return html;
 }
