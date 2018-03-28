@@ -87,6 +87,8 @@ function clearBelow() {
 	document.getElementById('search').disabled = true;
 	document.getElementById('resArea').innerHTML = "";
 	document.getElementById('placeDetails').innerHTML = "";
+	document.getElementById('favoritesArea').innerHTML = "";
+	document.getElementById('totalDetails').innerHTML = "";
 }
 
 function getIpAddress() {
@@ -251,6 +253,7 @@ function getUrl() {
 	else {
 		url = "/result?keyw=" + document.getElementById('keyword').value + "&category=" + document.getElementById('cat').value + "&distance=" + document.getElementById('dist').value + "&locOpt=other-loc&loc=" + document.getElementById('loc').value;
 	}
+	url = url.replace(/[^a-zA-Z0-9&?./,-= ]/g, '');
 	url = url.replaceAll(' ','+');
 	return url;
 }
