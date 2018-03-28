@@ -305,20 +305,33 @@ function formTable(obj,ind) {
 		console.log("obj = ", obj);
 	}
 	if (obj.status === "OK" && obj.results.length > 0) {
-		var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button disabled class='btn btn-outline-light-custom disabled' id='totalDetailsBtn' onclick='showTotalDetailsPage()'>Details ></button></div><div id='tableArea'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
+		if (prevClick === "") {
+			var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button disabled class='btn btn-outline-light-custom disabled' id='totalDetailsBtn' onclick='showTotalDetailsPage()'>Details ></button></div><div id='tableArea'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
+		}
+		else {
+			var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button class='btn btn-outline-light-custom' id='totalDetailsBtn' onclick='showTotalDetailsPage()'>Details ></button></div><div id='tableArea'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";			
+		}
 
 		for (var i = 0; i < obj.results.length; i++) {
 			var cnt = i+1+ind*20;
-			//var idT = "row_" + cnt;
 			var idT = "row_" + obj.results[i].place_id;
 			var btnID = "star_" + obj.results[i].place_id;
-			tab += "<tr id='row_" + obj.results[i].place_id + "'><td scope='row'>"+ cnt +"</td>";
+			if (prevClick === idT) {
+				tab += "<tr class='table-warning' id='row_" + obj.results[i].place_id + "'><td scope='row'>"+ cnt +"</td>";
+			}
+			else {
+				tab += "<tr id='row_" + obj.results[i].place_id + "'><td scope='row'>"+ cnt +"</td>";				
+			}
 			tab += "<td>" + "<img src='" + obj.results[i].icon + "' style='height:25px;width:25px'>" + "</td>";
 			tab += "<td>" + obj.results[i].name + "</td>";
 			tab += "<td>" + obj.results[i].vicinity + "</td>";
 			var t = "" + obj.results[i].place_id;
-			tab += "<td>" + "<button class='btn btn-outline-light-custom' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa fa-star' id='" + btnID + "' style='font-size:16px'></i></button>" + "</td>";
-			// tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "'))\"> > </button>" + "</td>";
+			if (favoriteList.indexOf(idT) >= 0) {
+				tab += "<td>" + "<button class='btn btn-outline-light-custom' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa active-star fa-star' id='" + btnID + "' style='font-size:16px'></i></button>" + "</td>";
+			}
+			else {
+				tab += "<td>" + "<button class='btn btn-outline-light-custom' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa fa-star' id='" + btnID + "' style='font-size:16px'></i></button>" + "</td>";
+			}
 			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn btn-outline-light-custom' onclick=\"(getDetails('" + t + "','" + idT + "','fromTable',"+ obj.results[i].geometry.location.lat + "," + obj.results[i].geometry.location.lng +"));updateFavPage()\"> > </button>" + "</td>";
 			tab += "</tr>";
 		}

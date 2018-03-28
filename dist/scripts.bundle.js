@@ -30,7 +30,13 @@ function updateTotalDetails() {
 	var html = "<div class='wrapper-div'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
 
 	for (var i = 0; i < detailsHtml.length; i++) {
-		document.getElementById(detailsHtml[i]).classList.remove('table-warning');
+		if(debug) {console.log("check detailsHtml = ", detailsHtml[i]);}
+		if (prevClick === detailsHtml[i]) {
+			document.getElementById(detailsHtml[i]).classList.add('table-warning');
+		}
+		else {
+			document.getElementById(detailsHtml[i]).classList.remove('table-warning');
+		}
 		var str = document.getElementById(detailsHtml[i]).outerHTML;
 		var starID = "star_" + detailsHtml[i].split('_')[1];
 		var nID = "details_" + starID;
@@ -55,13 +61,13 @@ function getDetails(pid,rowID,entryPoint,lat,long) {
 	detailsClickedAtLeastOnce = true;
 	detailsHtml.push(rowID);
 	detailsHtml = detailsHtml.filter(onlyUnique);
-	updateTotalDetails();
 	if (prevClick !== "") {
 		updatePrevClick(rowID);
 	}
 	else {
 		prevClick = rowID;
 	}
+	updateTotalDetails();
 	checkDetailsBtn();
 	var str = "";
 	pid = pid.replace(/\s/g,'');
@@ -97,9 +103,9 @@ function getDetails(pid,rowID,entryPoint,lat,long) {
 }
 
 function updatePrevClick(rowID) {
-	console.log('updatePrevClick');
 	document.getElementById(prevClick).classList.remove('table-warning');
 	prevClick = rowID;
+	if (debug) {console.log("prev click updated = ", prevClick);}
 }
 
 function goBackToTable(rowID,entryPoint) {
@@ -358,7 +364,7 @@ function getReviews(place) {
 		html += "</div>"
 	}
 	else {
-		html = "<div id='google-reviews' class='alert alert-warning'>No Google Reviews.</div>";
+		html += "<div id='google-reviews' class='alert alert-warning'>No Google Reviews.</div>";
 	}
 
 	if (place.adr_address) {
@@ -368,23 +374,29 @@ function getReviews(place) {
 		var address, city, state, country, postalCode;
 		for (var i = 0; i < temp.length; i++) {
 			if (temp[i].indexOf('street-address') > -1) {
-				address = temp[i].split("street-address")[1].substr(2).split("</")[0];
+				address = temp[i].split("street-address")[1].substr(2).split("</")[0].trim();
 			}
 			if (temp[i].indexOf('locality') > -1) {
-				city = temp[i].split("locality")[1].substr(2).split("</")[0];
+				city = temp[i].split("locality")[1].substr(2).split("</")[0].trim();
 			}
 			if (temp[i].indexOf('region') > -1) {
-				state = temp[i].split("region")[1].substr(2).split("</")[0];
+				state = temp[i].split("region")[1].substr(2).split("</")[0].trim();
 			}
 			if (temp[i].indexOf('country-name') > -1) {
-				country = temp[i].split("country-name")[1].substr(2).split("</")[0];
+				country = temp[i].split("country-name")[1].substr(2).split("</")[0].trim();
 			}
 			if (temp[i].indexOf('postal-code') > -1) {
-				postalCode = temp[i].split("postal-code")[1].substr(2).split("</")[0].split("-")[0];
+				postalCode = temp[i].split("postal-code")[1].substr(2).split("</")[0].split("-")[0].trim();
 			}
 		}
-		var url = "/yelp?name=" + name + "&address=" + address + "&city=" + city + "&state=" + state + "&postalCode=" + postalCode + "&country=" + country;
+		var latOfPlace = place.geometry.location.lat();
+		var lngOfPlace = place.geometry.location.lng();
+		var url = "/yelp?name=" + name + "&address=" + address + "&city=" + city + "&state=" + state + "&postalCode=" + postalCode + "&country=" + country + "&lat=" + latOfPlace + "&lng=" + lngOfPlace;
+		url = url.replace(/[^a-zA-Z0-9&?/.,-= ]/g, '');
 		url = url.replaceAll(' ','+');
+		if (debug) {
+			console.log("yelp url = ", url);
+		}
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.open("GET",url,false);
 		xmlhttp.send();
@@ -424,7 +436,7 @@ function getPhotos(place) {
 		html += "</div></div>";
 	}
 	else {
-		html = "<div class='alert alert-warning wrapper-div'>No place.photos.</div>";
+		html = "<div class='alert alert-warning wrapper-div'>No records.</div>";
 	}
 	return html;
 }
@@ -745,14 +757,29 @@ function clearVar() {
 function clearBelow() {
 	clearVar();
 	//saveValues(2);
+	if (document.getElementById('loc').classList.contains("danger-error")) {
+		document.getElementById('loc').classList.remove("danger-error");
+	}
+	if (document.getElementById('keyword').classList.contains("danger-error")) {
+		document.getElementById('keyword').classList.remove("danger-error");
+	}
+	if (document.getElementById('err-key')) {
+		document.getElementById('err-key').style.display = "none";
+	}
+	if (document.getElementById('err-loc')) {
+		document.getElementById('err-loc').style.display = "none";
+	}
 	document.getElementById('search').disabled = true;
 	document.getElementById('resArea').innerHTML = "";
 	document.getElementById('placeDetails').innerHTML = "";
+	document.getElementById('favoritesArea').innerHTML =  "<div class='alert alert-warning wrapper-div'>No records.</div>";
+	document.getElementById('totalDetails').innerHTML = "";
 }
 
 function getIpAddress() {
 	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.open("POST","http://ip-api.com/json",false);
+	var url = "http://ip-api.com/json";
+	xmlhttp.open("GET",url,false);
 	xmlhttp.send();
 	var ipr = xmlhttp.responseText;
 	var ipJson = JSON.parse(ipr);
@@ -766,7 +793,7 @@ function getIpAddress() {
 	currLat = ipJson.lat;
 	currLong = ipJson.lon;
 	document.getElementById('currLocation').value = "curr-loc-" + ipJson.lat + "," + ipJson.lon;
-	//console.log("lat and long " + document.getElementById('other-loc').value);
+	if (debug) {console.log("check value = ", document.getElementById('currLocation').value)};
 	getI = true;
 	initAutocomplete(1);
   	updateFavPage();
@@ -796,6 +823,20 @@ function enableSearch(i) {
 	}
 	else {
 		document.getElementById('search').disabled = true;
+	}
+}
+
+function checkOther() {
+	var key = document.getElementById('inputForm').elements['loc'].value;
+	key = key.replace(/\s/g, '');
+	key = key.replaceAll(',','');
+	key = key.replaceAll('\'','');
+	var test = /^\w+$/i.test(key);
+	if (!test) {
+		document.getElementById('search').disabled = true;
+	}
+	else {
+		document.getElementById('search').disabled = false;
 	}
 }
 
@@ -897,13 +938,14 @@ function getUrl() {
 	else {
 		url = "/result?keyw=" + document.getElementById('keyword').value + "&category=" + document.getElementById('cat').value + "&distance=" + document.getElementById('dist').value + "&locOpt=other-loc&loc=" + document.getElementById('loc').value;
 	}
+	url = url.replace(/[^a-zA-Z0-9&?./,-= ]/g, '');
 	url = url.replaceAll(' ','+');
 	return url;
 }
 
 function submitForm() {
-	document.getElementById('resArea').innerHTML = "<div class='progress'><div id='progress' class='progress-bar progress-bar-striped' role='progressbar' aria-valuemin='0' aria-valuemax='100'></div></div>";
-	progressBarSim();
+	document.getElementById('resArea').innerHTML = "<div class='progress'><div id='progress' class='progress-bar progress-bar-striped' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:50%'></div></div>";
+	//progressBarSim();
 	saveValues(1);
 	var url = getUrl();
 	var xmlhttp = new XMLHttpRequest();
@@ -913,7 +955,6 @@ function submitForm() {
 	var responseObj = JSON.parse(ipr);
 	document.getElementById('placeDetails').style.display = "none";
 	document.getElementById('resArea').style.display = "block";
-	favoriteList = [];
 	markers = [];
 	detailsHtml = [];
 	nextPageToken = [];
@@ -922,7 +963,7 @@ function submitForm() {
 	reviewsArrYelp = [];
 	detailsClickedAtLeastOnce = false;
 	toggle = true;
-	var a = setTimeout(function() {formTable(responseObj,0);},5000);
+	var a = formTable(responseObj,0);
 }
 
 
@@ -933,9 +974,9 @@ function showTotalDetailsPage() {
 		document.getElementById('tableArea').style.display = "none";
 	}
 	else {
-		for (var i = 0; i < detailsHtml.length; i++) {
-			document.getElementById(detailsHtml[i]).classList.remove('table-warning');
-		}
+		// for (var i = 0; i < detailsHtml.length; i++) {
+		// 	document.getElementById(detailsHtml[i]).classList.remove('table-warning');
+		// }
 		document.getElementById('totalDetails').style.display = "none";
 		document.getElementById('tableArea').style.display = "block";		
 	}
@@ -949,20 +990,34 @@ function formTable(obj,ind) {
 		console.log("obj = ", obj);
 	}
 	if (obj.status === "OK" && obj.results.length > 0) {
-		var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button disabled class='btn btn-outline-light-custom disabled' id='totalDetailsBtn' onclick='showTotalDetailsPage()'>Details ></button></div><div id='tableArea'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
+		if (prevClick === "") {
+			var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button disabled class='btn btn-outline-light-custom disabled' id='totalDetailsBtn' onclick='showTotalDetailsPage()'>Details ></button></div><div id='tableArea'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
+		}
+		else {
+			var tab = "<div class='wrapper-div'><div class='detailsBtnTab'><button class='btn btn-outline-light-custom' id='totalDetailsBtn' onclick='showTotalDetailsPage()'>Details ></button></div><div id='tableArea'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";			
+		}
 
 		for (var i = 0; i < obj.results.length; i++) {
 			var cnt = i+1+ind*20;
-			var idT = "row_" + cnt;
-			var btnID = "star_" + cnt;
-			tab += "<tr id='row_" + cnt + "'><td scope='row'>"+ cnt +"</td>";
+			var idT = "row_" + obj.results[i].place_id;
+			var btnID = "star_" + obj.results[i].place_id;
+			if (prevClick === idT) {
+				tab += "<tr class='table-warning' id='row_" + obj.results[i].place_id + "'><td scope='row'>"+ cnt +"</td>";
+			}
+			else {
+				tab += "<tr id='row_" + obj.results[i].place_id + "'><td scope='row'>"+ cnt +"</td>";				
+			}
 			tab += "<td>" + "<img src='" + obj.results[i].icon + "' style='height:25px;width:25px'>" + "</td>";
 			tab += "<td>" + obj.results[i].name + "</td>";
 			tab += "<td>" + obj.results[i].vicinity + "</td>";
 			var t = "" + obj.results[i].place_id;
-			tab += "<td>" + "<button class='btn btn-outline-light-custom' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa fa-star' id='" + btnID + "' style='font-size:16px'></i></button>" + "</td>";
-			// tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn' onclick=\"(getDetails('" + t + "','" + idT + "'))\"> > </button>" + "</td>";
-			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn btn-outline-light-custom' onclick=\"(getDetails('" + t + "','" + idT + "','fromTable',"+ obj.results[i].geometry.location.lat + "," + obj.results[i].geometry.location.lng +"))\"> > </button>" + "</td>";
+			if (favoriteList.indexOf(idT) >= 0) {
+				tab += "<td>" + "<button class='btn btn-outline-light-custom' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa active-star fa-star' id='" + btnID + "' style='font-size:16px'></i></button>" + "</td>";
+			}
+			else {
+				tab += "<td>" + "<button class='btn btn-outline-light-custom' onclick=\"(addRemoveFav('" + idT + "'))\"><i class='fa fa-star' id='" + btnID + "' style='font-size:16px'></i></button>" + "</td>";
+			}
+			tab += "<td>" + "<button ng-show='detailsShow' ng-show='detailsShow' class='btn btn-outline-light-custom' onclick=\"(getDetails('" + t + "','" + idT + "','fromTable',"+ obj.results[i].geometry.location.lat + "," + obj.results[i].geometry.location.lng +"));updateFavPage()\"> > </button>" + "</td>";
 			tab += "</tr>";
 		}
 
@@ -974,7 +1029,7 @@ function formTable(obj,ind) {
 		else if (obj.next_page_token !== undefined && ind !== 0) {
 			nextPageToken[ind] = obj.next_page_token;
 			var temp = obj.next_page_token + "," + ind;
-			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn btn-outline-dark' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "<button class='btn' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div></div>"
+			tab += "</tbody></table>" + "<div class='btn-nxt'><button class='btn btn-outline-dark' onclick=\"(getPrevPage('" + temp + " '))\">Previous</button>" + "<button class='btn btn-outline-dark' onclick=\"(getNextPage('" + temp + " '))\">Next</button>" + "</div></div></div>"
 
 		}
 		else if (ind !== 0 && obj.next_page_token === undefined) {
@@ -988,7 +1043,7 @@ function formTable(obj,ind) {
 		document.getElementById('resArea').innerHTML = tab;
 	}
 
-	else if (obj.results.length === 0 || obj.status === 'ZERO_RESULTS') {
+	else if (obj.status === 'ZERO_RESULTS') {
 		document.getElementById('resArea').innerHTML = "<div class='alert alert-warning wrapper-div'>No records.</div>";
 	}
 
@@ -1049,14 +1104,18 @@ function toggleResFav(to) {
 		document.getElementById('placeDetails').style.display = "none";
 		document.getElementById('totalDetails').style.display = "none";
 		document.getElementById('resArea').style.display = "block";
-		document.getElementById('tableArea').style.display = "block";
+		if (document.getElementById('tableArea')) {
+			document.getElementById('tableArea').style.display = "block";
+		}
 		document.getElementById('favoritesBtn').classList.remove("btn-primary");
 		document.getElementById('resultsBtn').classList.add("btn-primary");
 	}
 	else {
 		document.getElementById('favoritesArea').style.display = "block";
 		document.getElementById('resArea').style.display = "none";
-		document.getElementById('tableArea').style.display = "none";
+		if (document.getElementById('tableArea')) {
+			document.getElementById('tableArea').style.display = "none";
+		}
 		document.getElementById('totalDetails').style.display = "none";
 		document.getElementById('placeDetails').style.display = "none";
 		document.getElementById('favoritesBtn').classList.add("btn-primary");
@@ -1071,16 +1130,18 @@ function addRemoveFav(rowID) {
 	var detailBtnID = "details_" + btnID;
 	if (index > -1) {
 		document.getElementById(btnID).classList.remove('active-star');
-		if (document.getElementById(detailBtnID))
+		if (document.getElementById(detailBtnID)) {
 			document.getElementById(detailBtnID).classList.remove('active-star');
+		}
 	    favoriteList.splice(index, 1);
 		updateFavPage();
 		return false;
 	}
 	else {
 		document.getElementById(btnID).classList.add('active-star');
-		if (document.getElementById(detailBtnID))
+		if (document.getElementById(detailBtnID)) {
 			document.getElementById(detailBtnID).classList.add('active-star');
+		}
 		favoriteList.push(rowID);
 		updateFavPage();
 		return true;
@@ -1092,7 +1153,14 @@ function updateFavPage() {
 	if (favoriteList.length > 0) {
 		var html = "<div class='wrapper-div'><table class='table'><thead><tr><th scope='col'>#</th><th>Category</th><th>Name</th><th>Address</th><th>Favorites</th><th>Details</th></tr></thead><tbody>";
 		for (var i = 0; i < favoriteList.length; i++) {
-			document.getElementById(favoriteList[i]).classList.remove('table-warning');
+			if(debug) {console.log("check favoriteList = ", favoriteList[i]);}
+			if (prevClick === favoriteList[i]) {
+				document.getElementById(favoriteList[i]).classList.add('table-warning');
+			}
+			else {
+				document.getElementById(favoriteList[i]).classList.remove('table-warning');
+			}
+			//document.getElementById(favoriteList[i]).classList.remove('table-warning');
 			var str = document.getElementById(favoriteList[i]).outerHTML;
 			var starID = "star_" + favoriteList[i].split('_')[1];
 			var nID = "fav_" + starID;
