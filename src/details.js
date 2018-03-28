@@ -350,25 +350,29 @@ function getReviews(place) {
 		var address, city, state, country, postalCode;
 		for (var i = 0; i < temp.length; i++) {
 			if (temp[i].indexOf('street-address') > -1) {
-				address = temp[i].split("street-address")[1].substr(2).split("</")[0];
+				address = temp[i].split("street-address")[1].substr(2).split("</")[0].trim();
 			}
 			if (temp[i].indexOf('locality') > -1) {
-				city = temp[i].split("locality")[1].substr(2).split("</")[0];
+				city = temp[i].split("locality")[1].substr(2).split("</")[0].trim();
 			}
 			if (temp[i].indexOf('region') > -1) {
-				state = temp[i].split("region")[1].substr(2).split("</")[0];
+				state = temp[i].split("region")[1].substr(2).split("</")[0].trim();
 			}
 			if (temp[i].indexOf('country-name') > -1) {
-				country = temp[i].split("country-name")[1].substr(2).split("</")[0];
+				country = temp[i].split("country-name")[1].substr(2).split("</")[0].trim();
 			}
 			if (temp[i].indexOf('postal-code') > -1) {
-				postalCode = temp[i].split("postal-code")[1].substr(2).split("</")[0].split("-")[0];
+				postalCode = temp[i].split("postal-code")[1].substr(2).split("</")[0].split("-")[0].trim();
 			}
 		}
 		var latOfPlace = place.geometry.location.lat();
 		var lngOfPlace = place.geometry.location.lng();
 		var url = "/yelp?name=" + name + "&address=" + address + "&city=" + city + "&state=" + state + "&postalCode=" + postalCode + "&country=" + country + "&lat=" + latOfPlace + "&lng=" + lngOfPlace;
+		url = url.replace(/[^a-zA-Z0-9&?/.,-= ]/g, '');
 		url = url.replaceAll(' ','+');
+		if (debug) {
+			console.log("yelp url = ", url);
+		}
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.open("GET",url,false);
 		xmlhttp.send();
